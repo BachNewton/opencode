@@ -2,6 +2,7 @@
 
 import { NodeRuntime, NodeServices } from "@effect/platform-node"
 import { Cause, Effect } from "effect"
+import { getErrorReported } from "effect/Runtime"
 import { Commands } from "./commands/commands"
 import { Runtime } from "./framework/runtime"
 import { Observability } from "@opencode/util/observability"
@@ -135,7 +136,9 @@ Effect.gen(function* () {
   // channel through which a startup failure's reason reaches the user.
   Effect.tapCause((cause) =>
     Effect.sync(() => {
-      if (!Cause.hasInterruptsOnly(cause)) process.stderr.write(Cause.pretty(cause) + "\n")
+      if (Cause.hasInterruptsOnly(cause)) return
+      if (!getErrorReported(Cause.squash(cause))) return
+      process.stderr.write(Cause.pretty(cause) + "\n")
     }),
   ),
   NodeRuntime.runMain({ disableErrorReporting: true }),
