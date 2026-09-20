@@ -1122,6 +1122,29 @@ describe("OpencodePlugin", () => {
     ),
   )
 
+  it.effect("defaults public users to Big Pickle", () =>
+    withEnv({ OPENCODE_API_KEY: undefined }, () =>
+      Effect.gen(function* () {
+        const catalog = yield* Provider.Service
+        const models = yield* Model.Service
+        yield* catalog.transform((catalog) => {
+          catalog.update(Provider.ID.opencode, () => {})
+          catalog.models.update(Provider.ID.opencode, Model.ID.make("jev-1.13-free"), (draft) => {
+            draft.cost = cost(0)
+            draft.time.released = Date.UTC(2026, 8, 15)
+          })
+          catalog.models.update(Provider.ID.opencode, Model.ID.make("big-pickle"), (draft) => {
+            draft.cost = cost(0)
+            draft.time.released = Date.UTC(2025, 9, 17)
+          })
+        })
+        yield* addPlugin()
+        expect((yield* models.default())?.id).toBe(Model.ID.make("big-pickle"))
+        expect((yield* models.available())[0]?.id).toBe(Model.ID.make("big-pickle"))
+      }),
+    ),
+  )
+
   it.effect("treats output-only cost as free without credentials", () =>
     withEnv({ OPENCODE_API_KEY: undefined }, () =>
       Effect.gen(function* () {

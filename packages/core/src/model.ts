@@ -208,7 +208,12 @@ const layer = Layer.effect(
         const all = Array.from(byProvider.values())
           .flatMap((models) => Array.from(models.values()))
           .sort((left, right) => right.time.released - left.time.released)
-        cached = freeze({ data, all, available: all.filter((model) => model.enabled), byProvider }, true)
+        const requested = data.defaultModel
+        const preferred = requested && byProvider.get(requested.providerID)?.get(requested.modelID)
+        const available = preferred?.enabled
+          ? [preferred, ...all.filter((model) => model.enabled && model !== preferred)]
+          : all.filter((model) => model.enabled)
+        cached = freeze({ data, all, available, byProvider }, true)
         return cached
       }
     })

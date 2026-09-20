@@ -7,12 +7,14 @@ import { Bus } from "../../bus.js"
 import { Credential } from "../../credential.js"
 import { Integration } from "../../integration.js"
 import { IntegrationConnection } from "../../integration/connection.js"
+import { Model } from "../../model.js"
 import { Provider } from "../../provider.js"
 import { WebSearch } from "../../websearch.js"
 import { ConfigProvider } from "@opencode/schema/config/provider"
 import { Money } from "@opencode/schema/money"
 
 const defaultServer = "https://opencode.ai/console"
+const publicDefaultModelID = Model.ID.make("big-pickle")
 const clientID = "opencode-cli"
 const methodID = Integration.MethodID.make("device")
 const RemoteResponse = Schema.Struct({
@@ -254,6 +256,9 @@ export const OpencodePlugin = define<HttpClient.HttpClient | Bus.Service | Scope
         models.update(item.provider.id, model.id, (draft) => {
           draft.enabled = false
         })
+      }
+      if (models.get(item.provider.id, publicDefaultModelID)?.enabled) {
+        models.default.set(item.provider.id, publicDefaultModelID)
       }
     })
 
