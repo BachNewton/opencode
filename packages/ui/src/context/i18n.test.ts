@@ -1,6 +1,15 @@
 import { describe, expect, test } from "bun:test"
 import { createUiI18n, localizedListSeparator, pluralCategory, type UiI18nSource } from "./i18n"
 
+const i18n = (locale: string, translated: string) => {
+  const source: UiI18nSource = {
+    locale: () => locale,
+    t: () => translated,
+    plural: () => "",
+  }
+  return createUiI18n(source)
+}
+
 describe("pluralCategory", () => {
   test.each([
     ["en", 0, "other"],
@@ -24,15 +33,6 @@ describe("pluralCategory", () => {
 })
 
 describe("dynamic source copy", () => {
-  const i18n = (locale: string, translated: string) => {
-    const source: UiI18nSource = {
-      locale: () => locale,
-      t: () => translated,
-      plural: () => "",
-    }
-    return createUiI18n(source)
-  }
-
   test("keeps runtime copy for English locale tags", () => {
     expect(
       i18n("en-US", "Dictionary copy").tDynamic("dialog.usageExceeded.freeTier.title", "Runtime {{name}}", {
@@ -53,5 +53,10 @@ describe("localizedListSeparator", () => {
     expect(localizedListSeparator("en", 1, 3)).toBe(", ")
     expect(localizedListSeparator("en", 2, 3)).toBe(", and ")
     expect(localizedListSeparator("de", 1, 2)).toBe(" und ")
+  })
+
+  test("formats a complete localized list", () => {
+    expect(i18n("en", "").list(["Read", "Search", "List"])).toBe("Read, Search, and List")
+    expect(i18n("de", "").list(["Lesen", "Suchen"])).toBe("Lesen und Suchen")
   })
 })

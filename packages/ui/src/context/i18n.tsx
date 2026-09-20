@@ -25,6 +25,7 @@ export type UiI18nSource = {
 export type UiI18n = UiI18nSource & {
   /** Preserve runtime-generated English copy while using the keyed dictionary for every other locale. */
   tDynamic: (key: UiI18nOrdinaryKey, source: string, params?: UiI18nParams) => string
+  list: (items: readonly string[]) => string
   listSeparator: (index: number, count: number) => string
 }
 
@@ -72,6 +73,7 @@ export function createUiI18n(source: UiI18nSource): UiI18n {
     ...source,
     tDynamic: (key, value, params) =>
       source.locale().toLowerCase().split("-")[0] === "en" ? resolveTemplate(value, params) : source.t(key, params),
+    list: (items) => new Intl.ListFormat(source.locale(), { style: "long", type: "conjunction" }).format(items),
     listSeparator: (index, count) => localizedListSeparator(source.locale(), index, count),
   }
 }
