@@ -117,6 +117,7 @@ export const dict = {
   "command.category.workspace": "Ruang kerja",
   "command.category.settings": "Pengaturan",
   "command.logs.export": "Ekspor log",
+  "command.debugBar.toggle": "Aktifkan/nonaktifkan bilah debug",
 
   "theme.scheme.system": "Sistem",
   "theme.scheme.light": "Terang",
@@ -135,6 +136,7 @@ export const dict = {
   "command.session.previous.unseen": "Sesi sebelumnya yang belum dibaca",
   "command.session.next.unseen": "Sesi berikutnya yang belum dibaca",
   "command.session.archive": "Arsipkan sesi",
+  "command.session.location.cycle": "Gilir lokasi sesi",
 
   "command.palette": "Palet perintah",
 
@@ -208,6 +210,7 @@ export const dict = {
   "dialog.provider.opencode.note": "Model pilihan, termasuk Claude, GPT, Gemini, dan lainnya",
   "dialog.provider.opencode.tagline": "Model andal yang dioptimalkan",
   "dialog.provider.opencodeGo.tagline": "Langganan terjangkau untuk semua orang",
+  "dialog.provider.anthropic.note": "Akses langsung ke model Claude melalui kunci API",
   "dialog.provider.copilot.note": "Model AI untuk bantuan pengodean melalui GitHub Copilot",
   "dialog.provider.openai.note": "Model GPT untuk tugas AI umum yang cepat dan mumpuni",
   "dialog.provider.google.note": "Model Gemini untuk respons cepat dan terstruktur",
@@ -228,6 +231,7 @@ export const dict = {
   "dialog.provider.viewAll": "Tampilkan lebih banyak penyedia",
 
   "provider.connect.title": "Hubungkan {{provider}}",
+  "provider.connect.title.anthropicProMax": "Masuk dengan Anthropic",
   "provider.connect.selectMethod": "Pilih metode masuk untuk {{provider}}.",
   "provider.connect.method.apiKey": "Kunci API",
   "provider.connect.method.browser": "Peramban",
@@ -405,6 +409,10 @@ export const dict = {
   "prompt.action.stop": "Hentikan",
 
   "prompt.toast.attachmentDuplicate.title": "Berkas ini sudah diunggah",
+  "prompt.toast.uploading.percent": "{{percent}}%",
+  "prompt.toast.uploading.cancel": "Batalkan pengunggahan",
+  "prompt.toast.uploading.cancelFile": "Batalkan pengunggahan {{filename}}",
+  "prompt.toast.uploadFailed.title": "Pengunggahan gagal",
   "prompt.toast.modelAgentRequired.title": "Pilih agen dan model",
   "prompt.toast.modelAgentRequired.description": "Pilih agen dan model sebelum mengirim prompt.",
   "prompt.toast.worktreeCreateFailed.title": "Gagal membuat worktree",
@@ -910,6 +918,15 @@ export const dict = {
   "sidebar.empty.description": "Buka proyek untuk memulai",
 
   "debugBar.ariaLabel": "Diagnostik kinerja pengembangan",
+  "debugBar.providerAriaLabel": "Diagnostik kinerja penyedia",
+  "debugBar.ttft.label": "TTFT",
+  "debugBar.ttft.tip": "Waktu sejak permintaan dikirim ke penyedia hingga keluaran pertama model.",
+  "debugBar.ttfa.label": "TTFA",
+  "debugBar.ttfa.tip": "Waktu sejak permintaan dikirim ke penyedia hingga teks jawaban pertama.",
+  "debugBar.tps.label": "TPS",
+  "debugBar.tps.tip": "Jumlah token keluaran per detik setelah keluaran pertama model.",
+  "debugBar.e2e.label": "E2E",
+  "debugBar.e2e.tip": "Waktu sejak permintaan dikirim ke penyedia hingga aliran responsnya berakhir.",
   "debugBar.na": "n/a",
   "debugBar.nav.label": "NAV",
   "debugBar.nav.tip":
@@ -1052,6 +1069,10 @@ export const dict = {
   "settings.updates.action.checkNow": "Periksa sekarang",
   "settings.updates.action.checking": "Memeriksa…",
   "settings.updates.action.downloading": "Mengunduh…",
+  "settings.updates.action.download": "Unduh OpenCode",
+  "settings.updates.migration.title": "Beralih dari Beta ke Stabil",
+  "settings.updates.migration.description":
+    "Untuk saat ini, OpenCode Beta sedang beralih ke OpenCode Stabil. Unduh versi {{version}}, lalu instal OpenCode dari citra diska agar terus menerima pembaruan.",
   "settings.updates.action.installing": "Menginstal…",
   "settings.updates.toast.latest.title": "Versi Anda sudah terbaru",
   "settings.updates.toast.latest.description": "Anda menjalankan versi terbaru OpenCode.",
@@ -1517,6 +1538,10 @@ export const dict = {
   "session.browser.unsupported": "Aplikasi desktop ini tidak mendukung panel peramban.",
   "session.browser.suspended": "Peramban dijeda. Berinteraksilah dengan sesi ini untuk terhubung kembali.",
   "session.browser.address.placeholder": "Masukkan URL",
+  "session.browser.empty.title": "Masukkan URL",
+  "session.browser.empty.description": 'Atau masukkan prompt "Buka di peramban aplikasi"',
+  "session.browser.failed.title": "URL tidak dapat dijangkau",
+  "session.browser.failed.description": "Periksa URL dan koneksi Anda, lalu coba lagi.",
   "settings.backToSettings": "Kembali ke pengaturan",
   "settings.backToProjects": "Kembali ke proyek",
   "settings.search.placeholder": "Cari",

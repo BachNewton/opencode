@@ -18,7 +18,6 @@ export const dict = {
   "ui.sessionTurn.retry.attemptRetryingNow": "Forsøg {{attempt}} – prøver igen",
   "ui.sessionTurn.retry.attemptLabel": "Forsøg {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Forsøg {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Detaljer",
   "ui.messagePart.context.notice.one": "{{count}} meddelelse",
   "ui.messagePart.context.notice.other": "{{count}} meddelelser",
   "ui.promptInput.dropFiles.image": "Slip billeder eller filer for at tilføje dem",
@@ -267,4 +266,7 @@ export const dict = {
   "ui.sessionTimeline.notice.finished": "{{actor}} færdig",
   "ui.sessionTimeline.notice.instructionsUpdated": "Instruktioner opdateret",
   "ui.sessionTimeline.notice.restart": "Fortsætter efter genstart",
+  "ui.messagePart.context.updates": "Opdateringer",
+  "ui.promptInput.cancelUpload": "Annuller upload",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

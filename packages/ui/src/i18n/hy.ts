@@ -223,7 +223,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "Անցում {{model}} մոդելին",
   "ui.sessionTurn.retry.attemptLabel": "Փորձ {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Փորձ {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Մանրամասներ",
   "ui.messagePart.context.notice.one": "{{count}} ծանուցում",
   "ui.messagePart.context.notice.other": "{{count}} ծանուցումներ",
   "ui.messagePart.context.thought.one": "միտք",
@@ -248,4 +247,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "Բրաուզեր",
   "ui.common.fileCount.one": "{{count}} ֆայլ",
   "ui.common.fileCount.other": "{{count}} ֆայլ",
+  "ui.messagePart.context.updates": "Թարմացումներ",
+  "ui.promptInput.cancelUpload": "Չեղարկել վերբեռնումը",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

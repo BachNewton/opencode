@@ -231,7 +231,6 @@ export const dict: Record<string, string> = {
   "ui.common.question.zero": "jautājumu",
   "ui.sessionTurn.retry.attemptLabel": "Mēģiniet {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Mēģinājums {{attempt}} — {{line}}",
-  "ui.messagePart.context.details": "Sīkāka informācija",
   "ui.messagePart.context.notice.one": "{{count}} Paziņojums",
   "ui.messagePart.context.notice.other": "{{count}} Paziņojumi",
   "ui.messagePart.context.thought.one": "Doma",
@@ -261,4 +260,7 @@ export const dict: Record<string, string> = {
   "ui.common.fileCount.one": "{{count}} fails",
   "ui.common.fileCount.other": "{{count}} faili",
   "ui.common.fileCount.zero": "{{count}} faili",
+  "ui.messagePart.context.updates": "Atjauninājumi",
+  "ui.promptInput.cancelUpload": "Atcelt augšupielādi",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

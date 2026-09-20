@@ -240,7 +240,6 @@ export const dict: Record<string, string> = {
   "ui.common.question.many": "otázky",
   "ui.sessionTurn.retry.attemptLabel": "Pokus {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Pokus {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Podrobnosti",
   "ui.messagePart.context.notice.one": "{{count}} oznámení",
   "ui.messagePart.context.notice.other": "{{count}} oznámení",
   "ui.messagePart.context.thought.one": "Myšlenka",
@@ -275,4 +274,7 @@ export const dict: Record<string, string> = {
   "ui.common.fileCount.few": "{{count}} soubory",
   "ui.common.fileCount.many": "{{count}} souboru",
   "ui.common.fileCount.other": "{{count}} souborů",
+  "ui.messagePart.context.updates": "Aktualizace",
+  "ui.promptInput.cancelUpload": "Zrušit nahrávání",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

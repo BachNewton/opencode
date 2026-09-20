@@ -223,7 +223,6 @@ export const dict: Record<string, string> = {
 
   "ui.sessionTurn.retry.attemptLabel": "උත්සාහය {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "උත්සාහය {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "විස්තර",
   "ui.messagePart.context.notice.one": "දැනුම්දීම {{count}}",
   "ui.messagePart.context.notice.other": "දැනුම්දීම් {{count}}",
   "ui.promptInput.dropFiles.image": "එක් කිරීමට රූප හෝ ගොනු අතහරින්න",
@@ -250,4 +249,8 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "බ්‍රවුසරය",
   "ui.common.fileCount.one": "ගොනුව {{count}}",
   "ui.common.fileCount.other": "ගොනු {{count}}",
+
+  "ui.messagePart.context.updates": "යාවත්කාලීන",
+  "ui.promptInput.cancelUpload": "උඩුගත කිරීම අවලංගු කරන්න",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

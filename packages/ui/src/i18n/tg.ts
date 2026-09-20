@@ -223,7 +223,6 @@ export const dict = {
   "ui.sessionTimeline.notice.modelSwitched": "Ба {{model}} гузашт",
   "ui.sessionTurn.retry.attemptLabel": "Кӯшиши {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Кӯшиши {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Тафсилот",
   "ui.messagePart.context.notice.one": "{{count}} огоҳӣ",
   "ui.messagePart.context.notice.other": "{{count}} огоҳиҳо",
   "ui.messagePart.context.thought.one": "андеша",
@@ -248,4 +247,7 @@ export const dict = {
   "ui.tool.browser": "Браузер",
   "ui.common.fileCount.one": "{{count}} файл",
   "ui.common.fileCount.other": "{{count}} файл",
+  "ui.messagePart.context.updates": "Навсозиҳо",
+  "ui.promptInput.cancelUpload": "Боркуниро бекор кунед",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

@@ -18,7 +18,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTurn.retry.attemptRetryingNow": "Poging {{attempt}} – opnieuw proberen",
   "ui.sessionTurn.retry.attemptLabel": "Poging {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Poging {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Details",
   "ui.messagePart.context.notice.one": "{{count}} melding",
   "ui.messagePart.context.notice.other": "{{count}} meldingen",
   "ui.promptInput.dropFiles.image": "Zet afbeeldingen of bestanden neer om ze toe te voegen",
@@ -248,4 +247,7 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.finished": "{{actor}} voltooid",
   "ui.sessionTimeline.notice.instructionsUpdated": "Instructies bijgewerkt",
   "ui.sessionTimeline.notice.restart": "Doorgaan na opnieuw opstarten",
+  "ui.messagePart.context.updates": "Updates",
+  "ui.promptInput.cancelUpload": "Upload annuleren",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

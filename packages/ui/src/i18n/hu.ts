@@ -224,7 +224,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "Váltás erre a modellre: {{model}}",
   "ui.sessionTurn.retry.attemptLabel": "Kísérlet {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "{{attempt}} – {{line}} kísérlet",
-  "ui.messagePart.context.details": "Részletek",
   "ui.messagePart.context.notice.one": "{{count}} Megjegyzés",
   "ui.messagePart.context.notice.other": "{{count}} Megjegyzések",
   "ui.messagePart.context.thought.one": "Gondolat",
@@ -249,4 +248,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "Böngésző",
   "ui.common.fileCount.one": "{{count}} fájl",
   "ui.common.fileCount.other": "{{count}} fájlokat",
+  "ui.messagePart.context.updates": "Frissítések",
+  "ui.promptInput.cancelUpload": "Feltöltés megszakítása",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

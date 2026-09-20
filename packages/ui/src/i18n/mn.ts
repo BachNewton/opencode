@@ -222,7 +222,6 @@ export const dict = {
   "ui.sessionTimeline.notice.modelSwitched": "{{model}} загвар руу шилжлээ",
   "ui.sessionTurn.retry.attemptLabel": "Оролдлого {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Оролдлого {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Дэлгэрэнгүй",
   "ui.messagePart.context.notice.one": "{{count}} мэдэгдэл",
   "ui.messagePart.context.notice.other": "{{count}} мэдэгдэл",
   "ui.messagePart.context.thought.one": "бодол",
@@ -247,4 +246,7 @@ export const dict = {
   "ui.tool.browser": "Хөтөч",
   "ui.common.fileCount.one": "{{count}} файл",
   "ui.common.fileCount.other": "{{count}} файл",
+  "ui.messagePart.context.updates": "Шинэчлэлтүүд",
+  "ui.promptInput.cancelUpload": "Байршуулалтыг цуцлах",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

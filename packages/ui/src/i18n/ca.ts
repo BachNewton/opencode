@@ -231,7 +231,6 @@ export const dict: Record<string, string> = {
   "ui.common.question.many": "preguntes",
   "ui.sessionTurn.retry.attemptLabel": "Intent {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Intent {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Detalls",
   "ui.messagePart.context.notice.one": "{{count}} Avís",
   "ui.messagePart.context.notice.other": "{{count}} Avisos",
   "ui.messagePart.context.thought.one": "Pensament",
@@ -261,4 +260,7 @@ export const dict: Record<string, string> = {
   "ui.common.fileCount.one": "Fitxer {{count}}",
   "ui.common.fileCount.other": "Fitxers {{count}}",
   "ui.common.fileCount.many": "Fitxers {{count}}",
+  "ui.messagePart.context.updates": "Actualitzacions",
+  "ui.promptInput.cancelUpload": "Cancel·la la pujada",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

@@ -18,7 +18,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTurn.retry.attemptRetryingNow": "Försök {{attempt}} – försöker igen",
   "ui.sessionTurn.retry.attemptLabel": "Försök {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Försök {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Detaljer",
   "ui.messagePart.context.notice.one": "{{count}} meddelande",
   "ui.messagePart.context.notice.other": "{{count}} meddelanden",
   "ui.promptInput.dropFiles.image": "Släpp bilder eller filer för att lägga till dem",
@@ -248,4 +247,7 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.finished": "{{actor}} klar",
   "ui.sessionTimeline.notice.instructionsUpdated": "Instruktioner uppdaterade",
   "ui.sessionTimeline.notice.restart": "Fortsätter efter omstart",
+  "ui.messagePart.context.updates": "Uppdateringar",
+  "ui.promptInput.cancelUpload": "Avbryt uppladdning",
+  "ui.promptInput.uploading": "{{percent}} %",
 }

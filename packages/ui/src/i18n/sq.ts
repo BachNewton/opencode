@@ -222,7 +222,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "U kalua te {{model}}",
   "ui.sessionTurn.retry.attemptLabel": "Përpjekje {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Përpjekje {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Detajet",
   "ui.messagePart.context.notice.one": "Njoftim {{count}}",
   "ui.messagePart.context.notice.other": "{{count}} Njoftimet",
   "ui.messagePart.context.thought.one": "Mendimi",
@@ -247,4 +246,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "Shfletuesi",
   "ui.common.fileCount.one": "Skedari {{count}}",
   "ui.common.fileCount.other": "Skedarët {{count}}",
+  "ui.messagePart.context.updates": "Përditësime",
+  "ui.promptInput.cancelUpload": "Anulo ngarkimin",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

@@ -234,7 +234,6 @@ export const dict = {
   "ui.common.question.two": "שאלות",
   "ui.sessionTurn.retry.attemptLabel": "ניסיון {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "ניסיון {{attempt}} - \u2068{{line}}\u2069",
-  "ui.messagePart.context.details": "פרטים",
   "ui.messagePart.context.notice.one": "{{count}} הודעה",
   "ui.messagePart.context.notice.two": "{{count}} הודעות",
   "ui.messagePart.context.notice.other": "{{count}} הודעות",
@@ -261,4 +260,8 @@ export const dict = {
   "ui.messagePart.tools.used.other": "נעשה שימוש ב-{{count}} כלים: \u2068{{tools}}\u2069",
   "ui.tool.browser": "דפדפן",
   "ui.messagePart.tools.used.two": "נעשה שימוש ב-{{count}} כלים: \u2068{{tools}}\u2069",
+
+  "ui.messagePart.context.updates": "עדכונים",
+  "ui.promptInput.cancelUpload": "ביטול ההעלאה",
+  "ui.promptInput.uploading": "\u2068{{percent}}\u2069%",
 }

@@ -225,7 +225,6 @@ export const dict: Record<string, string> = {
 
   "ui.sessionTurn.retry.attemptLabel": "প্রচেষ্টা {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "প্রচেষ্টা {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "বিস্তারিত",
   "ui.messagePart.context.notice.one": "{{count}}টি বিজ্ঞপ্তি",
   "ui.messagePart.context.notice.other": "{{count}}টি বিজ্ঞপ্তি",
   "ui.promptInput.dropFiles.image": "যোগ করতে ছবি বা ফাইল ছাড়ুন",
@@ -252,4 +251,8 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "ব্রাউজার",
   "ui.common.fileCount.one": "{{count}}টি ফাইল",
   "ui.common.fileCount.other": "{{count}}টি ফাইল",
+
+  "ui.messagePart.context.updates": "আপডেট",
+  "ui.promptInput.cancelUpload": "আপলোড বাতিল করুন",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

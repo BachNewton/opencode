@@ -22,7 +22,6 @@ export const dict = {
   "ui.sessionTurn.retry.attemptRetryingNow": "Versuch {{attempt}} – erneuter Versuch",
   "ui.sessionTurn.retry.attemptLabel": "Versuch {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Versuch {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Details",
   "ui.messagePart.context.notice.one": "{{count}} Hinweis",
   "ui.messagePart.context.notice.other": "{{count}} Hinweise",
   "ui.promptInput.dropFiles.image": "Bilder oder Dateien zum Hinzufügen ablegen",
@@ -272,4 +271,7 @@ export const dict = {
   "ui.sessionTimeline.notice.finished": "{{actor}} fertig",
   "ui.sessionTimeline.notice.instructionsUpdated": "Anweisungen aktualisiert",
   "ui.sessionTimeline.notice.restart": "Fortsetzung nach Neustart",
+  "ui.messagePart.context.updates": "Aktualisierungen",
+  "ui.promptInput.cancelUpload": "Upload abbrechen",
+  "ui.promptInput.uploading": "{{percent}}%",
 } satisfies Partial<Record<Keys, string>>

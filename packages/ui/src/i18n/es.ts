@@ -22,7 +22,6 @@ export const dict = {
   "ui.sessionTurn.retry.attemptRetryingNow": "Intento {{attempt}}: reintentando",
   "ui.sessionTurn.retry.attemptLabel": "Intento {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Intento {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Detalles",
   "ui.messagePart.context.notice.one": "{{count}} aviso",
   "ui.messagePart.context.notice.other": "{{count}} avisos",
   "ui.promptInput.dropFiles.image": "Suelta imágenes o archivos para añadirlos",
@@ -282,4 +281,7 @@ export const dict = {
   "ui.sessionTimeline.notice.finished": "{{actor}} terminado",
   "ui.sessionTimeline.notice.instructionsUpdated": "Instrucciones actualizadas",
   "ui.sessionTimeline.notice.restart": "Continuando después del reinicio",
+  "ui.messagePart.context.updates": "Actualizaciones",
+  "ui.promptInput.cancelUpload": "Cancelar carga",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

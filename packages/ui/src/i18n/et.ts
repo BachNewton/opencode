@@ -222,7 +222,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "Lülituti mudelile {{model}}",
   "ui.sessionTurn.retry.attemptLabel": "Proovige {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Katse {{attempt}} – {{line}}",
-  "ui.messagePart.context.details": "Üksikasjad",
   "ui.messagePart.context.notice.one": "{{count}} Märkus",
   "ui.messagePart.context.notice.other": "{{count}} Märkused",
   "ui.messagePart.context.thought.one": "Mõte",
@@ -247,4 +246,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "Brauser",
   "ui.common.fileCount.one": "{{count}} fail",
   "ui.common.fileCount.other": "{{count}} failid",
+  "ui.messagePart.context.updates": "Uuendused",
+  "ui.promptInput.cancelUpload": "Tühista üleslaadimine",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

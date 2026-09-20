@@ -221,7 +221,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "ወደ {{model}} ተቀይሯል",
   "ui.sessionTurn.retry.attemptLabel": "ሙከራ {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "ሙከራ {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "ዝርዝሮች",
   "ui.messagePart.context.notice.one": "{{count}} ማሳወቂያ",
   "ui.messagePart.context.notice.other": "{{count}} ማሳወቂያዎች",
   "ui.messagePart.context.thought.one": "ሐሳብ",
@@ -246,4 +245,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "አሳሽ",
   "ui.common.fileCount.one": "{{count}} ፋይል",
   "ui.common.fileCount.other": "{{count}} ፋይሎች",
+  "ui.messagePart.context.updates": "ዝማኔዎች",
+  "ui.promptInput.cancelUpload": "ስቀላን ሰርዝ",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

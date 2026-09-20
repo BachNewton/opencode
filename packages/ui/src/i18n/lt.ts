@@ -240,7 +240,6 @@ export const dict: Record<string, string> = {
   "ui.common.question.many": "klausimų",
   "ui.sessionTurn.retry.attemptLabel": "Bandymas {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Bandymas {{attempt}} – {{line}}",
-  "ui.messagePart.context.details": "Detalės",
   "ui.messagePart.context.notice.one": "{{count}} Pastaba",
   "ui.messagePart.context.notice.other": "{{count}} pastabų",
   "ui.messagePart.context.thought.one": "mintis",
@@ -275,4 +274,7 @@ export const dict: Record<string, string> = {
   "ui.common.fileCount.other": "{{count}} failus",
   "ui.common.fileCount.few": "{{count}} failus",
   "ui.common.fileCount.many": "{{count}} failus",
+  "ui.messagePart.context.updates": "Atnaujinimai",
+  "ui.promptInput.cancelUpload": "Atšaukti įkėlimą",
+  "ui.promptInput.uploading": "{{percent}} %",
 }

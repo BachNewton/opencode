@@ -259,7 +259,6 @@ export const dict = {
   "ui.common.question.many": "вопросов",
   "ui.sessionTurn.retry.attemptLabel": "Попытка {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Попытка {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Подробности",
   "ui.messagePart.context.notice.one": "{{count}} уведомление",
   "ui.messagePart.context.notice.other": "{{count}} уведомления",
   "ui.messagePart.context.thought.one": "мысль",
@@ -294,4 +293,7 @@ export const dict = {
   "ui.messagePart.tools.used.many": "Использовано {{count}} {{tools}}",
   "ui.common.fileCount.few": "{{count}} файла",
   "ui.common.fileCount.many": "{{count}} файлов",
+  "ui.messagePart.context.updates": "Обновления",
+  "ui.promptInput.cancelUpload": "Отменить загрузку",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

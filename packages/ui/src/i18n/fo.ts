@@ -222,7 +222,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "Skifti til {{model}}",
   "ui.sessionTurn.retry.attemptLabel": "Roynd {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Roynd {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Smálutir",
   "ui.messagePart.context.notice.one": "{{count}} Fráboðan",
   "ui.messagePart.context.notice.other": "{{count}} Fráboðanir",
   "ui.messagePart.context.thought.one": "Hugsan",
@@ -247,4 +246,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "Kaga",
   "ui.common.fileCount.one": "{{count}} fíla",
   "ui.common.fileCount.other": "{{count}} fílur",
+  "ui.messagePart.context.updates": "Dagføringar",
+  "ui.promptInput.cancelUpload": "Ógilda uppsending",
+  "ui.promptInput.uploading": "{{percent}} %",
 }

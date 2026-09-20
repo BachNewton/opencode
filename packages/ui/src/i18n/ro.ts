@@ -232,7 +232,6 @@ export const dict: Record<string, string> = {
   "ui.common.question.few": "întrebări",
   "ui.sessionTurn.retry.attemptLabel": "Încercați {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Încercarea {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Detalii",
   "ui.messagePart.context.notice.one": "{{count}} Notă",
   "ui.messagePart.context.notice.other": "{{count}} de notificări",
   "ui.messagePart.context.thought.one": "Gând",
@@ -262,4 +261,7 @@ export const dict: Record<string, string> = {
   "ui.common.fileCount.one": "Fișierul {{count}}",
   "ui.common.fileCount.other": "Fișierele {{count}}",
   "ui.common.fileCount.few": "Fișierele {{count}}",
+  "ui.messagePart.context.updates": "Actualizări",
+  "ui.promptInput.cancelUpload": "Anulează încărcarea",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

@@ -251,7 +251,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "Preklopljeno na {{model}}",
   "ui.sessionTurn.retry.attemptLabel": "Poskus {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Poskus {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Podrobnosti",
   "ui.messagePart.context.notice.one": "{{count}} obvestilo",
   "ui.messagePart.context.notice.other": "{{count}} obvestil",
   "ui.messagePart.context.thought.one": "misel",
@@ -276,4 +275,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "Spletni brskalnik",
   "ui.common.fileCount.one": "{{count}} datoteka",
   "ui.common.fileCount.other": "{{count}} datotek",
+  "ui.messagePart.context.updates": "Posodobitve",
+  "ui.promptInput.cancelUpload": "Prekliči nalaganje",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

@@ -222,7 +222,6 @@ export const dict = {
   "ui.sessionTimeline.notice.modelSwitched": "Префрлено на {{model}}",
   "ui.sessionTurn.retry.attemptLabel": "Обид {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Обид {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Детали",
   "ui.messagePart.context.notice.one": "{{count}} известување",
   "ui.messagePart.context.notice.other": "{{count}} известувања",
   "ui.messagePart.context.thought.one": "мисла",
@@ -247,4 +246,7 @@ export const dict = {
   "ui.tool.browser": "Прелистувач",
   "ui.common.fileCount.one": "{{count}} датотека",
   "ui.common.fileCount.other": "{{count}} датотеки",
+  "ui.messagePart.context.updates": "Ажурирања",
+  "ui.promptInput.cancelUpload": "Откажи го поставувањето",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

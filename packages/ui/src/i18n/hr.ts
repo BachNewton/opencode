@@ -232,7 +232,6 @@ export const dict: Record<string, string> = {
   "ui.common.question.few": "pitanja",
   "ui.sessionTurn.retry.attemptLabel": "Pokušaj {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Pokušaj {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Detalji",
   "ui.messagePart.context.notice.one": "{{count}} obavijest",
   "ui.messagePart.context.notice.other": "{{count}} obavijesti",
   "ui.messagePart.context.thought.one": "Misao",
@@ -262,4 +261,7 @@ export const dict: Record<string, string> = {
   "ui.common.fileCount.one": "{{count}} datoteka",
   "ui.common.fileCount.few": "{{count}} datoteke",
   "ui.common.fileCount.other": "{{count}} datoteka",
+  "ui.messagePart.context.updates": "Ažuriranja",
+  "ui.promptInput.cancelUpload": "Otkaži prijenos",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

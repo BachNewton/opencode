@@ -223,7 +223,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "გადართვა მოდელზე {{model}}",
   "ui.sessionTurn.retry.attemptLabel": "მცდელობა {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "მცდელობა {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "დეტალები",
   "ui.messagePart.context.notice.one": "{{count}} შეტყობინება",
   "ui.messagePart.context.notice.other": "{{count}} შეტყობინება",
   "ui.messagePart.context.thought.one": "აზრი",
@@ -248,4 +247,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "ბრაუზერი",
   "ui.common.fileCount.one": "{{count}} ფაილი",
   "ui.common.fileCount.other": "{{count}} ფაილი",
+  "ui.messagePart.context.updates": "განახლებები",
+  "ui.promptInput.cancelUpload": "ატვირთვის გაუქმება",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

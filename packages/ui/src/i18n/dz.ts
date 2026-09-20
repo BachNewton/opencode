@@ -225,7 +225,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "{{model}} དཔེ་ཚད་ལུ་སོར་ཡོདཔ།",
   "ui.sessionTurn.retry.attemptLabel": "འབད་བརྩོན་ {{attempt}} .",
   "ui.sessionTurn.retry.attemptRetrying": "འབད་རྩོལ་ {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "ཁ་གསལ།",
   "ui.messagePart.context.notice.one": "{{count}} གསལ་བསྒྲགས།",
   "ui.messagePart.context.notice.other": "{{count}} གསལ་བསྒྲགས།",
   "ui.messagePart.context.thought.one": "བསམ་བློ།",
@@ -251,4 +250,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "བརའུ་ཟར་",
   "ui.common.fileCount.one": "{{count}} ཡིག་སྣོད་",
   "ui.common.fileCount.other": "{{count}} ཡིག་སྣོད་ཚུ།",
+  "ui.messagePart.context.updates": "དུས་མཐུན་ཚུ།",
+  "ui.promptInput.cancelUpload": "སྐྱེལ་བཙུགས་ཆ་མེད་བཏང་།",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

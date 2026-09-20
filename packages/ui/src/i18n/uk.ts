@@ -273,7 +273,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "Перемкнено на {{model}}",
   "ui.sessionTurn.retry.attemptLabel": "Спроба {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Спроба {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Деталі",
   "ui.messagePart.context.notice.one": "{{count}} примітка",
   "ui.messagePart.context.notice.other": "{{count}} примітки",
   "ui.messagePart.context.thought.one": "думка",
@@ -298,4 +297,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "Веббраузер",
   "ui.common.fileCount.one": "{{count}} файл",
   "ui.common.fileCount.other": "{{count}} файла",
+  "ui.messagePart.context.updates": "Оновлення",
+  "ui.promptInput.cancelUpload": "Скасувати завантаження",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

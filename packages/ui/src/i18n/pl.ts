@@ -260,7 +260,6 @@ export const dict = {
   "ui.common.question.many": "pytań",
   "ui.sessionTurn.retry.attemptLabel": "Próba {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Próba {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Szczegóły",
   "ui.messagePart.context.notice.one": "{{count}} powiadomienie",
   "ui.messagePart.context.notice.other": "{{count}} powiadomienia",
   "ui.messagePart.context.thought.one": "myśl",
@@ -295,4 +294,7 @@ export const dict = {
   "ui.messagePart.tools.used.many": "Użyto {{count}} {{tools}}",
   "ui.common.fileCount.few": "{{count}} pliki",
   "ui.common.fileCount.many": "{{count}} plików",
+  "ui.messagePart.context.updates": "Aktualizacje",
+  "ui.promptInput.cancelUpload": "Anuluj przesyłanie",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

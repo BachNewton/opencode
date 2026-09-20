@@ -250,7 +250,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "Prepnuté na {{model}}",
   "ui.sessionTurn.retry.attemptLabel": "Pokus {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Pokus {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Podrobnosti",
   "ui.messagePart.context.notice.one": "{{count}} upozornenie",
   "ui.messagePart.context.notice.other": "{{count}} upozornení",
   "ui.messagePart.context.thought.one": "myšlienka",
@@ -275,4 +274,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "Webový prehliadač",
   "ui.common.fileCount.one": "{{count}} súbor",
   "ui.common.fileCount.other": "{{count}} súborov",
+  "ui.messagePart.context.updates": "Aktualizácie",
+  "ui.promptInput.cancelUpload": "Zrušiť nahrávanie",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

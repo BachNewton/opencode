@@ -248,7 +248,6 @@ export const dict = {
   "ui.sessionTimeline.notice.modelSwitched": "{{model}} modeline geçildi",
   "ui.sessionTurn.retry.attemptLabel": "{{attempt}}'yu deneyin",
   "ui.sessionTurn.retry.attemptRetrying": "{{attempt}} - {{line}}'yu deneyin",
-  "ui.messagePart.context.details": "Ayrıntılar",
   "ui.messagePart.context.notice.one": "{{count}} Bildirimi",
   "ui.messagePart.context.notice.other": "{{count}} Bildirimleri",
   "ui.messagePart.context.thought.one": "Düşünce",
@@ -273,4 +272,7 @@ export const dict = {
   "ui.tool.browser": "Tarayıcı",
   "ui.common.fileCount.one": "{{count}} dosyası",
   "ui.common.fileCount.other": "{{count}} dosyaları",
+  "ui.messagePart.context.updates": "Güncellemeler",
+  "ui.promptInput.cancelUpload": "Yüklemeyi iptal et",
+  "ui.promptInput.uploading": "%{{percent}}",
 } satisfies Partial<Record<Keys, string>>

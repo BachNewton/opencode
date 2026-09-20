@@ -225,7 +225,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "مدل به \u2068{{model}}\u2069 تغییر کرد",
   "ui.sessionTurn.retry.attemptLabel": "تلاش {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "تلاش {{attempt}} - \u2068{{line}}\u2069",
-  "ui.messagePart.context.details": "جزئیات",
   "ui.messagePart.context.notice.one": "{{count}} اعلان",
   "ui.messagePart.context.notice.other": "{{count}} اعلان",
   "ui.messagePart.context.thought.one": "فکر",
@@ -248,4 +247,8 @@ export const dict: Record<string, string> = {
   "ui.messagePart.tools.used.one": "از {{count}} ابزار استفاده شد: \u2068{{tools}}\u2069",
   "ui.messagePart.tools.used.other": "از {{count}} ابزار استفاده شد: \u2068{{tools}}\u2069",
   "ui.tool.browser": "مرورگر",
+
+  "ui.messagePart.context.updates": "به‌روزرسانی‌ها",
+  "ui.promptInput.cancelUpload": "لغو بارگذاری",
+  "ui.promptInput.uploading": "\u2068{{percent}}\u2069٪",
 }

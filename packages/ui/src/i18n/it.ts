@@ -22,7 +22,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTurn.retry.attemptRetryingNow": "Tentativo {{attempt}}: nuovo tentativo in corso",
   "ui.sessionTurn.retry.attemptLabel": "Tentativo {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Tentativo {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Dettagli",
   "ui.messagePart.context.notice.one": "{{count}} avviso",
   "ui.messagePart.context.notice.other": "{{count}} avvisi",
   "ui.promptInput.dropFiles.image": "Trascina immagini o file per aggiungerli",
@@ -264,4 +263,7 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.finished": "{{actor}} finito",
   "ui.sessionTimeline.notice.instructionsUpdated": "Istruzioni aggiornate",
   "ui.sessionTimeline.notice.restart": "Continuazione dopo il riavvio",
+  "ui.messagePart.context.updates": "Aggiornamenti",
+  "ui.promptInput.cancelUpload": "Annulla caricamento",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

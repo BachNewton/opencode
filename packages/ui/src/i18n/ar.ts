@@ -284,7 +284,6 @@ export const dict = {
   "ui.common.question.many": "سؤالًا",
   "ui.sessionTurn.retry.attemptLabel": "المحاولة {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "المحاولة {{attempt}} - \u2068{{line}}\u2069",
-  "ui.messagePart.context.details": "التفاصيل",
   "ui.messagePart.context.notice.zero": "{{count}} إشعار",
   "ui.messagePart.context.notice.one": "{{count}} إشعار",
   "ui.messagePart.context.notice.two": "{{count}} إشعاران",
@@ -323,4 +322,8 @@ export const dict = {
   "ui.messagePart.tools.used.two": "استُخدمت {{count}} أداتان: \u2068{{tools}}\u2069",
   "ui.messagePart.tools.used.few": "استُخدمت \u2068{{count}}\u2069 أدوات: \u2068{{tools}}\u2069",
   "ui.messagePart.tools.used.many": "استُخدمت {{count}} أداة: \u2068{{tools}}\u2069",
+
+  "ui.messagePart.context.updates": "التحديثات",
+  "ui.promptInput.cancelUpload": "إلغاء الرفع",
+  "ui.promptInput.uploading": "\u2068{{percent}}\u2069%",
 }

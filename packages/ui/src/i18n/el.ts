@@ -222,7 +222,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "Έγινε αλλαγή στο μοντέλο {{model}}",
   "ui.sessionTurn.retry.attemptLabel": "Προσπάθεια {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Προσπάθεια {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Λεπτομέρειες",
   "ui.messagePart.context.notice.one": "Ειδοποίηση {{count}}",
   "ui.messagePart.context.notice.other": "Ειδοποιήσεις {{count}}",
   "ui.messagePart.context.thought.one": "Σκέψη",
@@ -247,4 +246,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "Πρόγραμμα περιήγησης",
   "ui.common.fileCount.one": "Αρχείο {{count}}",
   "ui.common.fileCount.other": "Αρχεία {{count}}",
+  "ui.messagePart.context.updates": "Ενημερώσεις",
+  "ui.promptInput.cancelUpload": "Ακύρωση μεταφόρτωσης",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

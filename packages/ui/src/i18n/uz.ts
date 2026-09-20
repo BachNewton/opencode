@@ -225,7 +225,6 @@ export const dict: Record<string, string> = {
   "ui.sessionTimeline.notice.modelSwitched": "{{model}} modeliga o‘tildi",
   "ui.sessionTurn.retry.attemptLabel": "Urinish {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Urinish {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Tafsilotlar",
   "ui.messagePart.context.notice.one": "{{count}} ta bildirishnoma",
   "ui.messagePart.context.notice.other": "{{count}} ta bildirishnoma",
   "ui.messagePart.context.thought.one": "ta fikr",
@@ -250,4 +249,7 @@ export const dict: Record<string, string> = {
   "ui.tool.browser": "Brauzer",
   "ui.common.fileCount.one": "{{count}} ta fayl",
   "ui.common.fileCount.other": "{{count}} ta fayl",
+  "ui.messagePart.context.updates": "Yangilanishlar",
+  "ui.promptInput.cancelUpload": "Yuklashni bekor qilish",
+  "ui.promptInput.uploading": "{{percent}}%",
 }

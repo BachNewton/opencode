@@ -21,7 +21,6 @@ export const dict: Record<Keys, string> = {
   "ui.sessionTurn.retry.attemptRetryingNow": "Forsøk {{attempt}} – prøver igjen",
   "ui.sessionTurn.retry.attemptLabel": "Forsøk {{attempt}}",
   "ui.sessionTurn.retry.attemptRetrying": "Forsøk {{attempt}} - {{line}}",
-  "ui.messagePart.context.details": "Detaljer",
   "ui.messagePart.context.notice.one": "{{count}} merknad",
   "ui.messagePart.context.notice.other": "{{count}} merknader",
   "ui.promptInput.dropFiles.image": "Slipp bilder eller filer for å legge dem til",
@@ -272,4 +271,7 @@ export const dict: Record<Keys, string> = {
   "ui.sessionTimeline.notice.finished": "{{actor}} ferdig",
   "ui.sessionTimeline.notice.instructionsUpdated": "Instruksjoner oppdatert",
   "ui.sessionTimeline.notice.restart": "Fortsetter etter omstart",
+  "ui.messagePart.context.updates": "Oppdateringer",
+  "ui.promptInput.cancelUpload": "Avbryt opplasting",
+  "ui.promptInput.uploading": "{{percent}} %",
 }
