@@ -110,6 +110,11 @@ export const SettingsModels: Component<{
       return counts
     }, new Map<string, number>()),
   )
+  const setProviderVisibility = (providerID: string, visible: boolean) =>
+    models
+      .list()
+      .filter((item) => item.provider.id === providerID)
+      .forEach((item) => models.setVisibility({ providerID, modelID: item.id }, visible))
 
   function ModelRows(props: { items: ModelItem[] }) {
     return (
@@ -311,6 +316,7 @@ export const SettingsModels: Component<{
                                   expanded={expanded(group.category)}
                                   disabled={searching()}
                                   detail={language.plural("settings.models.enabled", count(), { count: count() })}
+                                  onSetVisibility={(visible) => setProviderVisibility(group.category, visible)}
                                   onExpandedChange={(value) => setStore("collapsed", group.category, !value)}
                                 >
                                   <ModelRows items={group.items} />

@@ -274,6 +274,7 @@ export const DialogManageModels: Component = () => {
                                       expanded={expanded(group.category)}
                                       disabled={searching()}
                                       detail={language.plural("settings.models.enabled", count(), { count: count() })}
+                                      onSetVisibility={(visible) => setProviderVisibility(group.category, visible)}
                                       onExpandedChange={(value) => setStore("collapsed", group.category, !value)}
                                     >
                                       <ModelRows items={group.items} />

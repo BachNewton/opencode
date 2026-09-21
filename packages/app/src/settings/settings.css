@@ -1112,15 +1112,18 @@
 }
 
 .provider-model-group-header {
+  display: flex;
   min-width: 0;
+  align-items: center;
 }
 
 .provider-model-group-trigger {
   display: flex;
-  width: 100%;
+  min-width: 0;
+  flex: 1;
   min-height: 48px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 16px;
   padding: 12px 16px;
   border: 0;
@@ -1182,8 +1185,16 @@
   font-size: 13px;
   font-weight: 440;
   line-height: var(--line-height-compact);
-  color: var(--v2-text-text-muted);
+  color: var(--v2-text-text-faint);
   font-variant-numeric: tabular-nums;
+}
+
+.provider-model-group-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
+  padding-inline-end: 12px;
 }
 
 .provider-model-group-models {
