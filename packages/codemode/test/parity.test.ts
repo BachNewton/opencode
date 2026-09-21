@@ -350,6 +350,16 @@ describe("Error values and instanceof", () => {
     expect(await value(`return new Error("e") instanceof TypeError`)).toBe(false)
   })
 
+  test("new Error(message, { cause }) installs a non-enumerable cause only when the option is present", async () => {
+    expect(
+      await value(`
+        const inner = new Error("root")
+        const e = new TypeError("m", { cause: inner })
+        const agg = new AggregateError([], "a", { cause: 3 })
+        return [e.cause === inner, Object.keys(e), "cause" in new Error("m"), "cause" in new Error("m", { cause: undefined }), agg.cause]`),
+    ).toEqual([true, [], false, true, 3])
+  })
+
   test("thrown errors keep instanceof through try/catch", async () => {
     expect(await value(`try { throw new Error("x") } catch (e) { return [e instanceof Error, e.message] }`)).toEqual([
       true,
@@ -492,9 +502,15 @@ describe("CodeMode-specific array behavior", () => {
     expect(err.message).toContain("circular")
   })
 
-  test("keys/values/entries return arrays usable with for...of and spread", async () => {
+  test("indexOf and lastIndexOf with no argument search for undefined", async () => {
+    expect(await value(`return [1, undefined, 3].indexOf()`)).toBe(1)
+    expect(await value(`return [1, undefined, 3].lastIndexOf()`)).toBe(1)
+    expect(await value(`return [1, 2, 3].indexOf()`)).toBe(-1)
+  })
+
+  test("keys/values/entries return iterators usable with for...of and spread", async () => {
     expect(await value(`return [...["x","y","z"].keys()]`)).toEqual([0, 1, 2])
-    expect(await value(`return ["x","y"].values()`)).toEqual(["x", "y"])
+    expect(await value(`return [...["x","y"].values()]`)).toEqual(["x", "y"])
     expect(
       await value(`
       const out = []
@@ -930,6 +946,12 @@ describe("coercion parity: unknown static members read as undefined", () => {
     expect(await value(`try { JSON.rawJSON("1") } catch (e) { return e.message }`)).toBe(
       "JSON.rawJSON is not a function.",
     )
+    expect(await value(`try { search({ query: "star" }).catch(() => 1) } catch (e) { return e.message }`)).toBe(
+      "search(...).catch is not a function.",
+    )
+    expect(
+      await value(`const foo = () => ({ bar: () => ({}) }); try { foo().bar().baz() } catch (e) { return e.message }`),
+    ).toBe("foo(...).bar(...).baz is not a function.")
   })
 
   test("built-ins are objects on a real prototype chain", async () => {
@@ -948,6 +970,17 @@ describe("coercion parity: unknown static members read as undefined", () => {
         ]
       `),
     ).toEqual([true, true, true, "push", 1, 2, [], "function", true])
+  })
+})
+
+describe("async function line breaks", () => {
+  test("a line break between function and the name is an async function", async () => {
+    expect(await value(`async function\nfoo() { return 1 }\nreturn await foo()`)).toBe(1)
+  })
+
+  test("a line break between async and function is not an async function", async () => {
+    const failure = await error(`async\nfunction foo() { return 1 }\nreturn foo()`)
+    expect(failure.message).toContain("Unknown identifier 'async'")
   })
 })
 
