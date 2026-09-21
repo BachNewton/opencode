@@ -1620,6 +1620,43 @@ describe("SessionRunnerLLM", () => {
     ).toMatchObject({ current_values: { "test/context": Instructions.hash("Latest context") } })
   })
 
+  scenario("appends a generated continuation exchange to a fork", function* (s) {
+    yield* s.runPrompt("Main question")
+    const forked = yield* s.session.fork({
+      sessionID,
+      continuation: {
+        prompt: "Side question",
+        response: "Side answer",
+        agent: Agent.ID.make("build"),
+        model: Model.Ref.make({
+          id: Model.ID.make(s.currentModel.id),
+          providerID: Provider.ID.make(s.currentModel.provider),
+        }),
+        finish: "stop",
+      },
+    })
+
+    const messages = yield* s.session.messages({ sessionID: forked.id, order: "asc" })
+    expect(messages.at(-2)).toMatchObject({ type: "user", text: "Side question" })
+    expect(messages.at(-1)).toMatchObject({
+      type: "assistant",
+      agent: "build",
+      content: [{ type: "text", text: "Side answer" }],
+      finish: "stop",
+    })
+
+    yield* s.session.prompt({ sessionID: forked.id, text: "Continue", resume: false })
+    yield* s.session.resume(forked.id)
+    expect(
+      s.requests
+        .at(-1)
+        ?.messages.filter((message) => message.role === "assistant")
+        .flatMap((message) => message.content)
+        .filter((part) => part.type === "text")
+        .map((part) => part.text),
+    ).toContain("Side answer")
+  })
+
   scenario("keeps nested forks self-contained", function* (s) {
     yield* s.runPrompt("First")
     s.systemBaseline = "Changed context"

@@ -216,7 +216,12 @@ it.live(
 
       for (const config of configs) {
         yield* llm.push(TestLLM.text(`generated ${config.id}`, config.tool))
-        expect(yield* sessions.generate({ sessionID: config.id, prompt: "summarize" })).toBe(`generated ${config.id}`)
+        expect(yield* sessions.generate({ sessionID: config.id, prompt: "summarize" })).toEqual({
+          text: `generated ${config.id}`,
+          agent: Agent.ID.make("build"),
+          model: model.ref,
+          finish: "stop",
+        })
         yield* sessions.command({ sessionID: config.id, command: "instance-check", text: "" })
         expect(yield* sessions.inbox(config.id)).toMatchObject([
           { type: "user", payload: { text: `command ${config.tool} [${config.tool}]` } },

@@ -222,7 +222,19 @@ export type SessionRemoveInput = { readonly sessionID: Session.ID }
 export type SessionRemoveOutput = void
 export type SessionRemoveOperation<E = never> = (input: SessionRemoveInput) => Effect.Effect<SessionRemoveOutput, E>
 
-export type SessionForkInput = { readonly sessionID: Session.ID; readonly before?: SessionMessage.ID | undefined }
+export type SessionForkInput = {
+  readonly sessionID: Session.ID
+  readonly before?: SessionMessage.ID | undefined
+  readonly continuation?:
+    | {
+        readonly prompt: string
+        readonly response: string
+        readonly agent: Agent.ID
+        readonly model: Model.Ref
+        readonly finish: "stop" | "length" | "tool-calls" | "content-filter" | "error" | "unknown"
+      }
+    | undefined
+}
 export type SessionForkOutput = Session.Info
 export type SessionForkOperation<E = never> = (input: SessionForkInput) => Effect.Effect<SessionForkOutput, E>
 
@@ -402,7 +414,12 @@ export type SessionInstructionsEntryRemoveOperation<E = never> = (
 ) => Effect.Effect<SessionInstructionsEntryRemoveOutput, E>
 
 export type SessionGenerateInput = { readonly sessionID: Session.ID; readonly prompt: string }
-export type SessionGenerateOutput = { readonly text: string }
+export type SessionGenerateOutput = {
+  readonly text: string
+  readonly agent: Agent.ID
+  readonly model: Model.Ref
+  readonly finish: "stop" | "length" | "tool-calls" | "content-filter" | "error" | "unknown"
+}
 export type SessionGenerateOperation<E = never> = (
   input: SessionGenerateInput,
 ) => Effect.Effect<SessionGenerateOutput, E>
@@ -574,6 +591,15 @@ export type SessionLogOutput =
             readonly sessionID: Session.ID
             readonly parentID: Session.ID
             readonly boundary: Session.ForkBoundary
+            readonly continuation?:
+              | {
+                  readonly prompt: string
+                  readonly response: string
+                  readonly agent: Agent.ID
+                  readonly model: Model.Ref
+                  readonly finish: "stop" | "length" | "tool-calls" | "content-filter" | "error" | "unknown"
+                }
+              | undefined
             readonly instructions?:
               | { readonly [x: string & Brand.Brand<"Instruction.Key">]: string & Brand.Brand<"Instruction.Hash"> }
               | undefined

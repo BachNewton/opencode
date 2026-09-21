@@ -169,8 +169,6 @@ export type SessionInboxCompactionPayload = {}
 
 export type InstructionEntryKey = string
 
-export type SessionGenerateResponse = { data: { text: string } }
-
 export type LocationRef = { directory: string; workspaceID?: string }
 
 export type SessionInboxSyntheticPayload1 = { text: string; description?: string; metadata?: { [x: string]: any } }
@@ -494,6 +492,23 @@ export type SessionMessageModelSelected = {
   type: "model-switched"
   model: ModelRef
   previous?: ModelRef
+}
+
+export type SessionGenerateResponse = {
+  data: {
+    text: string
+    agent: string
+    model: ModelRef
+    finish: "stop" | "length" | "tool-calls" | "content-filter" | "error" | "unknown"
+  }
+}
+
+export type SessionForkContinuation = {
+  prompt: string
+  response: string
+  agent: string
+  model: ModelRef
+  finish: "stop" | "length" | "tool-calls" | "content-filter" | "error" | "unknown"
 }
 
 export type PromptFileAttachment = {
@@ -1801,6 +1816,7 @@ export type SessionForked = {
     sessionID: string
     parentID: string
     boundary: SessionForkBoundary
+    continuation?: SessionForkContinuation
     instructions?: { [x: string]: string }
     instructionEntries?: InstructionEntrySnapshot
   }
@@ -3921,7 +3937,26 @@ export type SessionRemoveOutput = void
 
 export type SessionForkInput = {
   readonly sessionID: { readonly sessionID: string }["sessionID"]
-  readonly before?: { readonly before?: string | undefined }["before"]
+  readonly before?: {
+    readonly before?: string | null
+    readonly continuation?: {
+      readonly prompt: string
+      readonly response: string
+      readonly agent: string
+      readonly model: { readonly id: string; readonly providerID: string; readonly variant?: string }
+      readonly finish: "stop" | "length" | "tool-calls" | "content-filter" | "error" | "unknown"
+    } | null
+  }["before"]
+  readonly continuation?: {
+    readonly before?: string | null
+    readonly continuation?: {
+      readonly prompt: string
+      readonly response: string
+      readonly agent: string
+      readonly model: { readonly id: string; readonly providerID: string; readonly variant?: string }
+      readonly finish: "stop" | "length" | "tool-calls" | "content-filter" | "error" | "unknown"
+    } | null
+  }["continuation"]
 }
 
 export type SessionForkOutput = { data: SessionInfo }["data"]

@@ -327,7 +327,12 @@ it.effect(
         Effect.provideService(Instance.Service, instances),
       )
 
-      expect(result).toBe("Transient answer")
+      expect(result).toEqual({
+        text: "Transient answer",
+        agent: Agent.ID.make("build"),
+        model: { id: ID.make("generate-model"), providerID: Provider.ID.make("test") },
+        finish: "stop",
+      })
       expect(requests).toHaveLength(1)
       expect(requests[0]?.model).toBe(model)
       expect(requests[0]?.system.map((part) => part.text)).toContain("Initial context")

@@ -532,7 +532,7 @@ export const make = Effect.fn("PluginHost.make")(function* (
       switchAgent: sessions.switchAgent,
       switchModel: sessions.switchModel,
       prompt: sessions.prompt,
-      generate: (input) => sessions.generate(input).pipe(Effect.map((text) => ({ text }))),
+      generate: sessions.generate,
       command: (input) => sessions.command({ ...input, command: input.name }),
       update: Effect.fn(function* (input) {
         yield* sessions.get(input.sessionID)

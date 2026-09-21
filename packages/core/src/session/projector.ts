@@ -55,6 +55,33 @@ const forkTitle = (value?: string) => {
   return `${value} (fork #1)`
 }
 
+function forkContinuation(event: typeof SessionEvent.Forked.Type) {
+  const continuation = event.data.continuation
+  if (!continuation) return []
+  const id = SessionMessage.ID.fromEvent(event.id)
+  const created = DateTime.makeUnsafe(event.created)
+  return [
+    SessionMessage.User.make({
+      id: SessionMessage.ID.make(`${id}_user`),
+      type: "user",
+      text: continuation.prompt,
+      files: [],
+      agents: [],
+      skills: [],
+      time: { created },
+    }),
+    SessionMessage.Assistant.make({
+      id: SessionMessage.ID.make(`${id}_assistant`),
+      type: "assistant",
+      agent: continuation.agent,
+      model: continuation.model,
+      content: [SessionMessage.AssistantText.make({ type: "text", text: continuation.response })],
+      finish: continuation.finish,
+      time: { created, completed: created },
+    }),
+  ]
+}
+
 function applyUsage(db: DatabaseService, sessionID: SessionSchema.ID, value: Usage) {
   return db
     .update(SessionTable)
@@ -220,7 +247,29 @@ const projectFork = Effect.fn("SessionProjector.projectFork")(function* (
 
     cursor = rows.at(-1)!.seq
   }
-  if (copiedSeq !== undefined) yield* Bus.reserveSequence(db, event.data.sessionID, copiedSeq)
+  const continuation = forkContinuation(event)
+  const lastSeq = (copiedSeq ?? 0) + continuation.length
+  if (continuation.length > 0) {
+    yield* db
+      .insert(SessionMessageTable)
+      .values(
+        continuation.map((message, index) => {
+          const encoded = encodeMessage(message)
+          const { id, type, ...data } = encoded
+          return {
+            id: SessionMessage.ID.make(id),
+            session_id: event.data.sessionID,
+            type,
+            seq: (copiedSeq ?? 0) + index + 1,
+            time_created: event.created,
+            data,
+          }
+        }),
+      )
+      .run()
+      .pipe(Effect.orDie)
+  }
+  if (lastSeq > 0) yield* Bus.reserveSequence(db, event.data.sessionID, lastSeq)
   if (event.data.instructions)
     yield* InstructionState.initialize(db, event.data.sessionID, event.durable.seq, event.data.instructions)
 })

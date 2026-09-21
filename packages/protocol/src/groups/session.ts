@@ -3,6 +3,7 @@ import { SessionInbox } from "@opencode/schema/session-inbox"
 import { PromptInput } from "@opencode/schema/prompt-input"
 import { Session } from "@opencode/schema/session"
 import { SessionStats } from "@opencode/schema/session-stats"
+import { SessionFork } from "@opencode/schema/session-fork"
 import { InstructionEntry } from "@opencode/schema/instruction-entry"
 import { Project } from "@opencode/schema/project"
 import {
@@ -35,6 +36,7 @@ import {
 import { Agent } from "@opencode/schema/agent"
 import { Skill } from "@opencode/schema/skill"
 import { Model } from "@opencode/schema/model"
+import { FinishReason } from "@opencode/schema/llm"
 import { Permission } from "@opencode/schema/permission"
 import { Location } from "@opencode/schema/location"
 import { SessionEvent } from "@opencode/schema/session-event"
@@ -308,7 +310,10 @@ export const makeSessionGroup = <
     .add(
       HttpApiEndpoint.post("session.fork", "/api/session/:sessionID/fork", {
         params: { sessionID: Session.ID },
-        payload: Schema.Struct({ before: SessionMessage.ID.pipe(Schema.optional) }),
+        payload: Schema.Struct({
+          before: SessionMessage.ID.pipe(Schema.optional),
+          continuation: SessionFork.Continuation.pipe(Schema.optional),
+        }),
         success: Schema.Struct({ data: PublicSessionInfo }),
         error: [SessionNotFoundError, MessageNotFoundError, InvalidRequestError],
       })
@@ -318,7 +323,7 @@ export const makeSessionGroup = <
             identifier: "session.fork",
             summary: "Fork session",
             description:
-              "Create a child session by copying projected history before a message. Omit before to copy the full history.",
+              "Create a child session by copying projected history before a message. Omit before to copy the full history; provide a continuation to append a completed user and assistant exchange.",
           }),
         ),
     )
@@ -706,7 +711,12 @@ export const makeSessionGroup = <
         params: { sessionID: Session.ID },
         payload: Schema.Struct({ prompt: Schema.String }),
         success: Schema.Struct({
-          data: Schema.Struct({ text: Schema.String }),
+          data: Schema.Struct({
+            text: Schema.String,
+            agent: Agent.ID,
+            model: Model.Ref,
+            finish: FinishReason,
+          }),
         }).annotate({ identifier: "SessionGenerateResponse" }),
         error: [SessionNotFoundError, ServiceUnavailableError],
       })
@@ -715,7 +725,8 @@ export const makeSessionGroup = <
           OpenApi.annotations({
             identifier: "session.generate",
             summary: "Generate text from session context",
-            description: "Generate transient text from the current session context without mutating session history.",
+            description:
+              "Generate transient text and its resolved agent, model, and finish metadata from the current session context without mutating session history.",
           }),
         ),
     )

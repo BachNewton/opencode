@@ -223,14 +223,20 @@ export const SessionHandler = HttpApiBuilder.group(Api, "server.session", (handl
         "session.fork",
         Effect.fn(function* (ctx) {
           return {
-            data: yield* session.fork({ sessionID: ctx.params.sessionID, before: ctx.payload.before }).pipe(
-              Effect.catchTag("Session.NotFoundError", missingSession),
-              Effect.catchTag("Session.MessageNotFoundError", missingMessage),
-              Effect.catchTag(
-                "Session.ForkEmptyError",
-                (error) => new InvalidRequestError({ message: error.message, kind: "empty_session" }),
+            data: yield* session
+              .fork({
+                sessionID: ctx.params.sessionID,
+                before: ctx.payload.before,
+                continuation: ctx.payload.continuation,
+              })
+              .pipe(
+                Effect.catchTag("Session.NotFoundError", missingSession),
+                Effect.catchTag("Session.MessageNotFoundError", missingMessage),
+                Effect.catchTag(
+                  "Session.ForkEmptyError",
+                  (error) => new InvalidRequestError({ message: error.message, kind: "empty_session" }),
+                ),
               ),
-            ),
           }
         }),
       )
@@ -582,7 +588,7 @@ export const SessionHandler = HttpApiBuilder.group(Api, "server.session", (handl
       .handle(
         "session.generate",
         Effect.fn(function* (ctx) {
-          const text = yield* session
+          const result = yield* session
             .generate({ sessionID: ctx.params.sessionID, prompt: ctx.payload.prompt })
             .pipe(
               Effect.mapError((error) =>
@@ -591,7 +597,7 @@ export const SessionHandler = HttpApiBuilder.group(Api, "server.session", (handl
                   : new ServiceUnavailableError({ message: error.message, service: "session generation" }),
               ),
             )
-          return { data: { text } }
+          return { data: result }
         }),
       )
       .handle(

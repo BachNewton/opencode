@@ -927,6 +927,53 @@ test("session methods use the public HTTP contract", async () => {
   })
 })
 
+test("session fork carries a generated continuation", async () => {
+  const bodies: unknown[] = []
+  const client = OpenCode.make({
+    baseUrl: "http://localhost:3000",
+    fetch: async (input, init) => {
+      const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url
+      if (typeof init?.body === "string") bodies.push(JSON.parse(init.body))
+      if (url.endsWith("/generate")) {
+        return Response.json({
+          data: {
+            text: "Side answer",
+            agent: "build",
+            model: { id: "claude", providerID: "anthropic" },
+            finish: "stop",
+          },
+        })
+      }
+      return Response.json(session)
+    },
+  })
+
+  const generated = await client.session.generate({ sessionID: "ses_test", prompt: "Side question" })
+  await client.session.fork({
+    sessionID: "ses_test",
+    continuation: {
+      prompt: "Side question",
+      response: generated.text,
+      agent: generated.agent,
+      model: generated.model,
+      finish: generated.finish,
+    },
+  })
+
+  expect(bodies).toEqual([
+    { prompt: "Side question" },
+    {
+      continuation: {
+        prompt: "Side question",
+        response: "Side answer",
+        agent: "build",
+        model: { id: "claude", providerID: "anthropic" },
+        finish: "stop",
+      },
+    },
+  ])
+})
+
 test("middleware errors remain declared client errors", async () => {
   const client = OpenCode.make({
     baseUrl: "http://localhost:3000",

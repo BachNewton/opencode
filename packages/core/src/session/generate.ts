@@ -1,6 +1,9 @@
 export * as SessionGenerate from "./generate.js"
 
 import { LLMClient, Message, type AIError } from "@opencode/ai"
+import type { Agent } from "@opencode/schema/agent"
+import type { FinishReason } from "@opencode/schema/llm"
+import type { Model } from "@opencode/schema/model"
 import { Effect } from "effect"
 import { Database } from "../database/database.js"
 import { Instance } from "../instance/service.js"
@@ -15,6 +18,13 @@ import type { SessionRunnerModel } from "./runner/model.js"
 import type { SessionSchema } from "./schema.js"
 
 export type Error = AgentNotFoundError | Instructions.InitializationBlocked | SessionRunnerModel.Error | AIError
+
+export interface Result {
+  readonly text: string
+  readonly agent: Agent.ID
+  readonly model: Model.Ref
+  readonly finish: FinishReason
+}
 
 /** Generates text from current Session context without mutating the Session. */
 export const generate = Effect.fn("SessionGenerate.generate")(function* (input: {
@@ -62,6 +72,11 @@ export const generate = Effect.fn("SessionGenerate.generate")(function* (input: 
     })
     const response = yield* llm.generate(prepared.request, prepared.options)
     yield* Effect.logInfo("session generation usage diagnostic", { usage: response.usage })
-    return response.text
+    return {
+      text: response.text,
+      agent: selection.agent.id,
+      model: model.ref,
+      finish: response.finishReason.normalized,
+    }
   }).pipe(instances.provide(input.session))
 })

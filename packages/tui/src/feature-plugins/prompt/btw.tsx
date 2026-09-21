@@ -74,8 +74,16 @@ export default Plugin.define({
                         answer={result.text.trim()}
                         markdown={plugins.markdown}
                         onFork={async () => {
-                          const fork = await context.client.session.fork({ sessionID: route.sessionID })
-                          await context.client.session.prompt({ sessionID: fork.id, text: question })
+                          const fork = await context.client.session.fork({
+                            sessionID: route.sessionID,
+                            continuation: {
+                              prompt: question,
+                              response: result.text.trim(),
+                              agent: result.agent,
+                              model: result.model,
+                              finish: result.finish,
+                            },
+                          })
                           context.ui.dialog.clear()
                           context.ui.router.navigate({ type: "session", sessionID: fork.id })
                         }}

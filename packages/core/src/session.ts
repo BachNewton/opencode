@@ -4,6 +4,7 @@ export * from "./session/schema.js"
 import { Effect, Layer, Schema, Context, Stream } from "effect"
 import { LLMClient } from "@opencode/ai"
 import { ListAnchor } from "@opencode/schema/session"
+import type { SessionFork } from "@opencode/schema/session-fork"
 import { and, desc, eq } from "drizzle-orm"
 import { Project } from "./project.js"
 import { Model } from "@opencode/schema/model"
@@ -95,6 +96,7 @@ type CompactInput = Parameters<Session.Handle["compact"]>[0] & { sessionID: Sess
 type ForkInput = {
   sessionID: SessionSchema.ID
   before?: SessionMessage.ID
+  continuation?: SessionFork.Continuation
 }
 
 export {
@@ -182,7 +184,7 @@ export interface Interface {
   readonly generate: (input: {
     sessionID: SessionSchema.ID
     prompt: string
-  }) => Effect.Effect<string, NotFoundError | SessionGenerate.Error>
+  }) => Effect.Effect<SessionGenerate.Result, NotFoundError | SessionGenerate.Error>
   readonly command: (input: {
     sessionID: SessionSchema.ID
     command: string
@@ -337,6 +339,7 @@ const layer = Layer.effect(
           sessionID,
           parentID: parent.id,
           boundary: { type: input.before ? "before" : "through", messageID: boundary.id },
+          continuation: input.continuation,
           ...inherited,
         })
         return yield* result.get(sessionID).pipe(Effect.orDie)
