@@ -4,6 +4,7 @@ import { UserTable } from "@opencode-ai/console-core/schema/user.sql.js"
 import { WorkspaceTable } from "@opencode-ai/console-core/schema/workspace.sql.js"
 import { redirect } from "@solidjs/router"
 import { Actor } from "@opencode-ai/console-core/actor.js"
+import { loginUrl } from "~/lib/login-redirect"
 
 import { createClient } from "@openauthjs/openauth/client"
 
@@ -127,7 +128,7 @@ export const getActor = async (workspace?: string): Promise<Actor.Info> => {
         }
       }
     }
-    throw redirect("/auth/authorize")
+    throw redirect(loginUrl(evt.request))
   })()
   return evt.locals.actor
 }
