@@ -20,7 +20,7 @@ type DesktopFileAPI = Pick<
   | "writeClipboardText"
 >
 
-export function createDesktopFiles(api: DesktopFileAPI, os: DesktopOS, acceptedExtensions: string[]) {
+export function createDesktopFiles(api: DesktopFileAPI, os: DesktopOS) {
   const attachmentPaths = new WeakMap<File, string>()
   const openDirectoryPickerDialog: Extract<Platform, { platform: "desktop" }>["openDirectoryPickerDialog"] = async (
     options,
@@ -35,7 +35,7 @@ export function createDesktopFiles(api: DesktopFileAPI, os: DesktopOS, acceptedE
       multiple: options?.multiple ?? false,
       title: options?.title,
       defaultPath: options?.defaultPath,
-      extensions: options?.extensions ?? acceptedExtensions,
+      extensions: options?.extensions,
     })
     if (!result) return
     try {

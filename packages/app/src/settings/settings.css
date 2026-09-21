@@ -905,7 +905,6 @@
 .settings-project-card[data-menu="true"] {
   background: var(--v2-background-bg-layer-02);
 }
-
 .settings-tab-search-clear {
   position: absolute;
   top: 50%;
@@ -1094,10 +1093,6 @@
 
 .settings-server-connection .settings-servers-row {
   padding-block: 20px;
-}
-
-.settings-server-connection .settings-servers-lead {
-  gap: 4px;
 }
 
 .settings-servers-row:not(:last-child) {
@@ -1509,6 +1504,12 @@
   font-weight: 440;
   line-height: 1;
   color: var(--v2-state-fg-danger);
+}
+
+.settings-server-dialog-hint {
+  font-size: 13px;
+  line-height: var(--line-height-base);
+  color: var(--v2-text-text-muted);
 }
 
 .settings-extensions-tabs[data-component="tabs-v2"][data-variant="pill"] > [data-slot="tabs-v2-list"] {

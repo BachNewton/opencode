@@ -1,4 +1,5 @@
-import { For, Show, createEffect, createMemo, on, type Component } from "solid-js"
+import { Show, createEffect, createMemo, on, type Component } from "solid-js"
+import { Key } from "@solid-primitives/keyed"
 import { createStore } from "solid-js/store"
 import { createResizeObserver } from "@solid-primitives/resize-observer"
 import { Button } from "@opencode/ui/button"
@@ -152,9 +153,11 @@ export const SettingsProjects: Component<{
           }
         >
           <div role="list" class="settings-project-list">
-            <For each={filtered()}>
-              {(project) => <SettingsProjectRow project={project} server={props.server} onOpen={props.onOpenProject} />}
-            </For>
+            <Key each={filtered()} by="worktree">
+              {(project) => (
+                <SettingsProjectRow project={project()} server={props.server} onOpen={props.onOpenProject} />
+              )}
+            </Key>
           </div>
         </Show>
       </div>

@@ -33,12 +33,8 @@ export const fileHandlers = FileRpcs.toLayer(
         ),
       FilesRevealPath: ({ path }) => files.revealPath(path),
       FilesCheckDirectories: ({ paths }) => files.checkDirectories(paths),
-      FilesReadClipboardImage: () =>
-        Effect.sync(() => {
-          const image = files.readClipboardImage()
-          return image ? { ...image, buffer: new Uint8Array(image.buffer) } : null
-        }),
-      FilesWriteClipboardText: ({ text }) => Effect.sync(() => files.writeClipboardText(text)),
+      FilesReadClipboardImage: () => files.readClipboardImage(),
+      FilesWriteClipboardText: ({ text }) => files.writeClipboardText(text),
     })
   }),
 )

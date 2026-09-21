@@ -243,6 +243,7 @@ for (const count of [7, 8]) {
 }
 
 test("Projects shows an add action in its empty state", async ({ page }) => {
+  await page.route("**/api/project", (route) => route.fulfill({ json: [] }))
   await persistProjects(page, [])
   await page.reload()
   const view = ui(page)
