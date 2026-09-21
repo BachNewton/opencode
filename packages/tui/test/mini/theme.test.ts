@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test"
 import path from "node:path"
 import { RGBA, type CliRenderer, type TerminalColors } from "@opentui/core"
-import { DEFAULT_THEME, resolveThemeDocument, selectTheme, type ResolvedTheme } from "@opencode/theme/tui"
+import { resolveThemeDocument, selectTheme, type ResolvedTheme } from "@opencode/theme/tui"
 import {
   RUN_THEME_MONO,
   RUN_THEME_FALLBACK,
@@ -9,7 +9,7 @@ import {
   resolveRunTheme,
   type RunTheme,
 } from "../../src/mini/theme"
-import { DEFAULT_THEMES, parseTheme } from "../../src/theme"
+import { DEFAULT_THEMES, getOpenCodeTheme, parseTheme } from "../../src/theme"
 import { generateSystem } from "../../src/theme/system"
 import { tmpdir } from "../fixture/fixture"
 
@@ -90,9 +90,9 @@ function expectFooter(actual: RunTheme, theme: ResolvedTheme) {
     formfieldFocusedBg: theme.background.formfield.focused,
     formfieldFocusedText: theme.text.formfield.focused,
     selection: theme.text.formfield.selected,
-    running: theme.text.status.running,
-    question: theme.text.status.question,
-    permission: theme.text.status.permission,
+    running: theme.hue.interactive[200],
+    question: theme.hue.accent[200],
+    permission: theme.hue.accent[200],
     success: theme.text.feedback.success.base,
     link: theme.markdown.link,
     shade: theme.background.raised.base,
@@ -136,7 +136,10 @@ test.each(["light", "dark"] as const)("uses shared %s defaults and named built-i
   const colors = terminalColors({}, mode)
   for (const name of [undefined, "opencode", "tokyonight"] as const) {
     const theme = await resolveRunTheme(renderer({ colors }), { name, mode })
-    const expected = resolveThemeDocument(parseTheme(DEFAULT_THEMES[name ?? "opencode"]), mode)
+    const expected = resolveThemeDocument(
+      name === undefined || name === "opencode" ? getOpenCodeTheme() : parseTheme(DEFAULT_THEMES[name]),
+      mode,
+    )
     try {
       expectFooter(theme, expected)
       expect(rgba(theme.background).toInts()).toEqual(RGBA.fromHex(colors.defaultBackground!).toInts())
@@ -187,7 +190,7 @@ test.each(["light", "dark"] as const)("shares the %s system scheme while retaini
 test.each(["light", "dark"] as const)(
   "loads complete %s custom theme files",
   async (mode) => {
-    const base = selectTheme(DEFAULT_THEME, mode)
+    const base = selectTheme(getOpenCodeTheme(), mode)
     const definition = {
       ...base,
       text: {
@@ -219,7 +222,6 @@ test.each(["light", "dark"] as const)(
     }
     const { hue, ...tokens } = definition
     const source = {
-      version: 2,
       base: tokens,
       [mode]: { hue },
     }
@@ -236,10 +238,10 @@ test.each(["light", "dark"] as const)(
 test.each(["light", "dark"] as const)(
   "falls back to shared %s defaults for unknown or invalid themes",
   async (mode) => {
-    const expected = resolveThemeDocument(parseTheme(DEFAULT_THEMES.opencode), mode)
+    const expected = resolveThemeDocument(getOpenCodeTheme(), mode)
     for (const source of [
-      { version: 2, [mode]: { categorical: [] } },
-      { version: 2, [mode]: { text: { base: "$missing" } } },
+      { [mode]: { categorical: [] } },
+      { [mode]: { text: { base: "$missing" } } },
       undefined,
     ]) {
       if (source) await Bun.write(path.join(tmp.path, "themes", "mini-invalid.json"), JSON.stringify(source))
@@ -263,7 +265,10 @@ test.each(["light", "dark"] as const)("resolves dark-only Aura on an automatic %
   })
   const theme = await resolveRunTheme(renderer({ colors }), { name: "aura" })
   try {
-    expectFooter(theme, resolveThemeDocument(parseTheme(DEFAULT_THEMES[mode === "light" ? "opencode" : "aura"]), mode))
+    expectFooter(
+      theme,
+      resolveThemeDocument(mode === "light" ? getOpenCodeTheme() : parseTheme(DEFAULT_THEMES.aura), mode),
+    )
     expect(rgba(theme.background).toInts()).toEqual(RGBA.fromHex(colors.defaultBackground!).toInts())
   } finally {
     theme.block.syntax?.destroy()
@@ -273,10 +278,10 @@ test.each(["light", "dark"] as const)("resolves dark-only Aura on an automatic %
 test.each(["light", "dark"] as const)(
   "falls back only for unsupported modes of a %s-only custom theme",
   async (mode) => {
-    const base = selectTheme(DEFAULT_THEME, mode)
+    const base = selectTheme(getOpenCodeTheme(), mode)
     const definition = { ...base, text: { ...base.text, base: "#123456" } }
     const { hue, ...tokens } = definition
-    const source = { version: 2, base: tokens, [mode]: { hue } }
+    const source = { base: tokens, [mode]: { hue } }
     await Bun.write(path.join(tmp.path, "themes", "mini-one-mode.json"), JSON.stringify(source))
     for (const requested of ["light", "dark"] as const) {
       const theme = await resolveRunTheme(renderer({ colors: terminalColors({}, requested) }), {
@@ -286,7 +291,7 @@ test.each(["light", "dark"] as const)(
       try {
         expectFooter(
           theme,
-          resolveThemeDocument(parseTheme(requested === mode ? source : DEFAULT_THEMES.opencode), requested),
+          resolveThemeDocument(requested === mode ? parseTheme(source) : getOpenCodeTheme(), requested),
         )
       } finally {
         theme.block.syntax?.destroy()
@@ -296,7 +301,7 @@ test.each(["light", "dark"] as const)(
 )
 
 test.each(["light", "dark"] as const)("handles unavailable palettes in %s mode", async (mode) => {
-  const expected = resolveThemeDocument(parseTheme(DEFAULT_THEMES.opencode), mode)
+  const expected = resolveThemeDocument(getOpenCodeTheme(), mode)
   for (const input of [
     { fail: true },
     { colors: emptyColors },
@@ -332,7 +337,7 @@ test("uses refreshed background brightness rather than stale mode or ANSI slot z
 })
 
 test.each(["light", "dark"] as const)("follows physical %s mode over opposite configuration", async (mode) => {
-  const expected = resolveThemeDocument(parseTheme(DEFAULT_THEMES.opencode), mode)
+  const expected = resolveThemeDocument(getOpenCodeTheme(), mode)
   for (const fail of [false, true]) {
     const theme = await resolveRunTheme(renderer({ colors: terminalColors({}, mode), themeMode: mode, fail }), {
       mode: mode === "light" ? "dark" : "light",
@@ -350,7 +355,7 @@ test.each(["system", "opencode"])(
   async (name) => {
     const colors = terminalColors()
     const expected = resolveThemeDocument(
-      parseTheme(name === "system" ? generateSystem(colors, "light") : DEFAULT_THEMES.opencode),
+      name === "system" ? parseTheme(generateSystem(colors, "light")) : getOpenCodeTheme(),
       "light",
     )
     const input = { colors, fail: false, themeMode: "dark" as "dark" | "light" }

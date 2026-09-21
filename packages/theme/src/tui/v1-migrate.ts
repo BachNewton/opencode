@@ -1,6 +1,6 @@
 import { RGBA } from "@opentui/core"
 import { oklchToHex, rgbToOklch } from "./color.js"
-import { DEFAULT_CATEGORICAL } from "./defaults.js"
+import { DEFAULT_CATEGORICAL } from "./categorical.js"
 import type { BaseThemeDefinition, HueDefinition, Mode, ThemeDefinition, ThemeDocument } from "./index.js"
 import { HueStep } from "./schema.js"
 import type { Theme, ThemeV1Json } from "./v1.js"
@@ -50,14 +50,13 @@ export function migrateV1(theme: ThemeV1Json): ThemeDocument {
     const darkMode = detectMode(dark)
     if (lightMode === darkMode) {
       const definition = migrateMode(lightMode === "light" ? light : dark, lightMode)
-      if (lightMode === "light") return { version: 2, base: base(definition), light: { hue: definition.hue } }
-      return { version: 2, base: base(definition), dark: { hue: definition.hue } }
+      if (lightMode === "light") return { base: base(definition), light: { hue: definition.hue } }
+      return { base: base(definition), dark: { hue: definition.hue } }
     }
   }
   const lightDefinition = migrateMode(light, "light")
   const darkDefinition = migrateMode(dark, "dark")
   return {
-    version: 2,
     base: base(lightDefinition),
     light: { hue: lightDefinition.hue },
     dark: darkDefinition,
@@ -129,12 +128,6 @@ function migrateMode(theme: Theme, mode: Mode): ThemeDefinition {
         $pressed: primary,
         $disabled: textMuted,
         $selected: primary,
-      },
-      status: {
-        running: "$hue.interactive.200",
-        question: "$text.status.unread",
-        permission: "$text.status.unread",
-        unread: "$hue.accent.200",
       },
       feedback: {
         error: { base: color("error") },
