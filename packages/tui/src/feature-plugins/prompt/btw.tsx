@@ -132,7 +132,7 @@ export function Answer(props: {
     mode: "modal",
     commands: [
       { bind: "c", title: "Copy answer", group: "Dialog", run: copy },
-      { bind: "f", title: "Continue in fork", group: "Dialog", run: fork },
+      { bind: "f", title: "Fork session", group: "Dialog", run: fork },
     ],
   }))
 
@@ -194,7 +194,7 @@ export function Answer(props: {
           <span style={{ fg: theme.text.base }}>
             <b>{forking() ? "…" : "f"}</b>
           </span>
-          <span style={{ fg: theme.text.muted }}>{forking() ? " forking" : " continue in fork"}</span>
+          <span style={{ fg: theme.text.muted }}>{forking() ? " forking" : " fork session"}</span>
         </text>
         <text fg={theme.text.muted}>↑/↓ scroll</text>
       </box>
