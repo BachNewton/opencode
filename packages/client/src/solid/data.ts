@@ -846,7 +846,7 @@ export function createData(config: CreateDataInput) {
             existing.error = undefined
             existing.finish = undefined
             existing.rawFinish = undefined
-            existing.providerState = undefined
+            existing.native = undefined
             existing.time.created = event.data.started
             existing.time.streamed = undefined
             existing.time.completed = undefined
@@ -880,7 +880,7 @@ export function createData(config: CreateDataInput) {
           assistant.time.completed = event.created
           assistant.finish = event.data.finish
           assistant.rawFinish = event.data.rawFinish
-          assistant.providerState = event.data.providerState
+          assistant.native = event.data.providerState
           assistant.cost = event.data.cost
           assistant.tokens = event.data.tokens
           if (event.data.snapshot) assistant.snapshot = { ...assistant.snapshot, end: event.data.snapshot }
@@ -892,7 +892,7 @@ export function createData(config: CreateDataInput) {
           assistant.time.completed = event.created
           assistant.finish = event.data.finish ?? "error"
           assistant.rawFinish = event.data.rawFinish
-          assistant.providerState = event.data.providerState
+          assistant.native = event.data.providerState
           assistant.error = event.data.error
           assistant.retry = undefined
           if (event.data.cost !== undefined && event.data.tokens !== undefined) {
@@ -984,7 +984,7 @@ export function createData(config: CreateDataInput) {
           assistant.content.push({
             type: "reasoning",
             text: "",
-            state: event.data.state,
+            native: event.data.state,
             time: { created: event.created },
           })
         })
@@ -998,7 +998,7 @@ export function createData(config: CreateDataInput) {
         message.editReasoning(event.data.sessionID, event.data.assistantMessageID, (reasoning) => {
           reasoning.text = event.data.text
           reasoning.time = { created: reasoning.time?.created ?? event.created, completed: event.created }
-          if (event.data.state !== undefined) reasoning.state = event.data.state
+          if (event.data.state !== undefined) reasoning.native = event.data.state
         })
         return
       case "session.retry.scheduled":
@@ -1105,7 +1105,7 @@ export function createData(config: CreateDataInput) {
               status: "completed",
               reason: event.data.reason,
               model: event.data.model,
-              providerState: event.data.providerState,
+              native: event.data.providerState,
               providerContext: event.data.providerContext,
               summary: event.data.text,
               recent: event.data.recent,
@@ -1120,7 +1120,7 @@ export function createData(config: CreateDataInput) {
             status: "completed",
             reason: event.data.reason,
             model: event.data.model,
-            providerState: event.data.providerState,
+            native: event.data.providerState,
             providerContext: event.data.providerContext,
             summary: event.data.text,
             recent: event.data.recent,

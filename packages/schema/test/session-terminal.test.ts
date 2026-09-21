@@ -23,14 +23,24 @@ test("assistant terminal diagnostics remain optional and round trip", () => {
         ...assistant,
         finish: "content-filter",
         rawFinish: "SAFETY",
-        providerState: { promptFeedback: { blockReason: "SAFETY" } },
+        native: { promptFeedback: { blockReason: "SAFETY" } },
       }),
     ),
   ).toMatchObject({
     finish: "content-filter",
     rawFinish: "SAFETY",
-    providerState: { promptFeedback: { blockReason: "SAFETY" } },
+    native: { promptFeedback: { blockReason: "SAFETY" } },
   })
+  const legacy = SessionMessage.persisted({
+    ...assistant,
+    providerState: { promptFeedback: { blockReason: "SAFETY" } },
+    content: [{ type: "text", text: "hello", state: { signature: "sig" } }],
+  })
+  expect(decode(legacy)).toMatchObject({
+    native: { promptFeedback: { blockReason: "SAFETY" } },
+    content: [{ type: "text", native: { signature: "sig" } }],
+  })
+  expect(encode(decode(legacy))).not.toHaveProperty("providerState")
 })
 
 test("failed steps only override the assistant finish for content filters", () => {

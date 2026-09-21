@@ -257,8 +257,8 @@ describe("contract hygiene", () => {
       text: "hello",
     })
     expect(
-      SessionMessage.AssistantReasoning.make({ type: "reasoning", text: "thinking", state: { id: "opaque" } }),
-    ).toEqual({ type: "reasoning", text: "thinking", state: { id: "opaque" } })
+      SessionMessage.AssistantReasoning.make({ type: "reasoning", text: "thinking", native: { id: "opaque" } }),
+    ).toEqual({ type: "reasoning", text: "thinking", native: { id: "opaque" } })
     expect(
       SessionMessage.AssistantTool.make({
         type: "tool",

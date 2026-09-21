@@ -2558,7 +2558,7 @@ describe("SessionRunnerLLM", () => {
         expect(s.executions).toEqual(["x".repeat(4_000)])
         expect((yield* s.messages).find((message) => message.type === "compaction")).toMatchObject({
           model: { id: s.currentModel.id, providerID: s.currentModel.provider, variant },
-          providerState: { responseId: "summary" },
+          native: { responseId: "summary" },
         })
 
         // Compare wire content without the cache breakpoints that move to the new final message.
@@ -4965,7 +4965,7 @@ describe("SessionRunnerLLM", () => {
         type: "assistant",
         finish: "stop",
         rawFinish: "end_turn",
-        providerState: { responseId: "response-1", serviceTier: "priority" },
+        native: { responseId: "response-1", serviceTier: "priority" },
         content: [Expected.text("Complete")],
       },
     ])
@@ -4996,7 +4996,7 @@ describe("SessionRunnerLLM", () => {
         type: "assistant",
         finish: "content-filter",
         rawFinish: "SAFETY",
-        providerState: {
+        native: {
           responseId: "response-blocked",
           refusal: { category: "safety", explanation: "Prompt blocked" },
         },

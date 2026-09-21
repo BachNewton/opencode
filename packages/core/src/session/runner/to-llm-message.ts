@@ -162,7 +162,7 @@ const assistant = (message: SessionMessage.Assistant, model: Model.Ref, provider
           text: item.text,
           // Text can carry provider-bound state (e.g. Gemini thought signatures),
           // which is only replayable against the model that produced it.
-          providerMetadata: reuseProviderMetadata ? providerMetadata(providerMetadataKey, item.state) : undefined,
+          providerMetadata: reuseProviderMetadata ? providerMetadata(providerMetadataKey, item.native) : undefined,
         },
       ]
     // Let the destination adapter handle readable reasoning after a model/provider switch.
@@ -172,7 +172,7 @@ const assistant = (message: SessionMessage.Assistant, model: Model.Ref, provider
             {
               type: "reasoning",
               text: item.text,
-              providerMetadata: providerMetadata(providerMetadataKey, item.state),
+              providerMetadata: providerMetadata(providerMetadataKey, item.native),
             },
           ]
         : item.text.length > 0

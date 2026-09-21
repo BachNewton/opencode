@@ -135,7 +135,7 @@ test.each(["started", "cancelled", "failed"])(
           status: "completed",
           summary: "Summary",
           model,
-          providerState,
+          native: providerState,
           providerContext,
           cost: 0.01,
           tokens,

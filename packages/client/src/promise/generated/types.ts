@@ -509,12 +509,12 @@ export type PromptAgentAttachment = { name: string; mention?: PromptMention }
 
 export type PromptSkillAttachment = { id: string; name: string; text?: string; mention?: PromptMention }
 
-export type SessionMessageAssistantText = { type: "text"; text: string; state?: SessionMessageProviderState }
+export type SessionMessageAssistantText = { type: "text"; text: string; native?: SessionMessageProviderState }
 
 export type SessionMessageAssistantReasoning = {
   type: "reasoning"
   text: string
-  state?: SessionMessageProviderState
+  native?: SessionMessageProviderState
   time?: { created: number; completed?: number }
 }
 
@@ -1354,12 +1354,12 @@ export type SessionToolCalled = {
   }
 }
 
-export type SessionMessageAssistantText1 = { type: "text"; text: string; state?: SessionMessageProviderState1 }
+export type SessionMessageAssistantText1 = { type: "text"; text: string; native?: SessionMessageProviderState1 }
 
 export type SessionMessageAssistantReasoning1 = {
   type: "reasoning"
   text: string
-  state?: SessionMessageProviderState1
+  native?: SessionMessageProviderState1
   time?: { created: number; completed?: number }
 }
 
@@ -1762,7 +1762,7 @@ export type SessionMessageCompactionCompleted = {
   status: "completed"
   reason: "auto" | "manual"
   model?: ModelRef
-  providerState?: SessionMessageProviderState
+  native?: SessionMessageProviderState
   summary: string
   recent: string
   providerContext?: SessionProviderContext
@@ -2228,7 +2228,7 @@ export type SessionMessageAssistant = {
   snapshot?: { start?: string; end?: string; files?: Array<string> }
   finish?: "stop" | "length" | "tool-calls" | "content-filter" | "error" | "unknown"
   rawFinish?: string
-  providerState?: SessionMessageProviderState
+  native?: SessionMessageProviderState
   cost?: MoneyUSD
   tokens?: TokenUsageInfo
   error?: SessionStructuredError
@@ -3102,11 +3102,11 @@ export type SessionImportInput = {
           readonly agent: string
           readonly model: { readonly id: string; readonly providerID: string; readonly variant?: string }
           readonly content: ReadonlyArray<
-            | { readonly type: "text"; readonly text: string; readonly state?: { readonly [x: string]: JsonValue } }
+            | { readonly type: "text"; readonly text: string; readonly native?: { readonly [x: string]: JsonValue } }
             | {
                 readonly type: "reasoning"
                 readonly text: string
-                readonly state?: { readonly [x: string]: JsonValue }
+                readonly native?: { readonly [x: string]: JsonValue }
                 readonly time?: { readonly created: number; readonly completed?: number }
               }
             | {
@@ -3180,7 +3180,7 @@ export type SessionImportInput = {
           readonly snapshot?: { readonly start?: string; readonly end?: string; readonly files?: ReadonlyArray<string> }
           readonly finish?: "stop" | "length" | "tool-calls" | "content-filter" | "error" | "unknown"
           readonly rawFinish?: string
-          readonly providerState?: { readonly [x: string]: JsonValue }
+          readonly native?: { readonly [x: string]: JsonValue }
           readonly cost?: number
           readonly tokens?: {
             readonly input: number
@@ -3214,7 +3214,7 @@ export type SessionImportInput = {
               readonly status: "completed"
               readonly reason: "auto" | "manual"
               readonly model?: { readonly id: string; readonly providerID: string; readonly variant?: string }
-              readonly providerState?: { readonly [x: string]: JsonValue }
+              readonly native?: { readonly [x: string]: JsonValue }
               readonly summary: string
               readonly recent: string
               readonly providerContext?: {
@@ -3419,11 +3419,11 @@ export type SessionImportInput = {
           readonly agent: string
           readonly model: { readonly id: string; readonly providerID: string; readonly variant?: string }
           readonly content: ReadonlyArray<
-            | { readonly type: "text"; readonly text: string; readonly state?: { readonly [x: string]: JsonValue } }
+            | { readonly type: "text"; readonly text: string; readonly native?: { readonly [x: string]: JsonValue } }
             | {
                 readonly type: "reasoning"
                 readonly text: string
-                readonly state?: { readonly [x: string]: JsonValue }
+                readonly native?: { readonly [x: string]: JsonValue }
                 readonly time?: { readonly created: number; readonly completed?: number }
               }
             | {
@@ -3497,7 +3497,7 @@ export type SessionImportInput = {
           readonly snapshot?: { readonly start?: string; readonly end?: string; readonly files?: ReadonlyArray<string> }
           readonly finish?: "stop" | "length" | "tool-calls" | "content-filter" | "error" | "unknown"
           readonly rawFinish?: string
-          readonly providerState?: { readonly [x: string]: JsonValue }
+          readonly native?: { readonly [x: string]: JsonValue }
           readonly cost?: number
           readonly tokens?: {
             readonly input: number
@@ -3531,7 +3531,7 @@ export type SessionImportInput = {
               readonly status: "completed"
               readonly reason: "auto" | "manual"
               readonly model?: { readonly id: string; readonly providerID: string; readonly variant?: string }
-              readonly providerState?: { readonly [x: string]: JsonValue }
+              readonly native?: { readonly [x: string]: JsonValue }
               readonly summary: string
               readonly recent: string
               readonly providerContext?: {
@@ -3736,11 +3736,11 @@ export type SessionImportInput = {
           readonly agent: string
           readonly model: { readonly id: string; readonly providerID: string; readonly variant?: string }
           readonly content: ReadonlyArray<
-            | { readonly type: "text"; readonly text: string; readonly state?: { readonly [x: string]: JsonValue } }
+            | { readonly type: "text"; readonly text: string; readonly native?: { readonly [x: string]: JsonValue } }
             | {
                 readonly type: "reasoning"
                 readonly text: string
-                readonly state?: { readonly [x: string]: JsonValue }
+                readonly native?: { readonly [x: string]: JsonValue }
                 readonly time?: { readonly created: number; readonly completed?: number }
               }
             | {
@@ -3814,7 +3814,7 @@ export type SessionImportInput = {
           readonly snapshot?: { readonly start?: string; readonly end?: string; readonly files?: ReadonlyArray<string> }
           readonly finish?: "stop" | "length" | "tool-calls" | "content-filter" | "error" | "unknown"
           readonly rawFinish?: string
-          readonly providerState?: { readonly [x: string]: JsonValue }
+          readonly native?: { readonly [x: string]: JsonValue }
           readonly cost?: number
           readonly tokens?: {
             readonly input: number
@@ -3848,7 +3848,7 @@ export type SessionImportInput = {
               readonly status: "completed"
               readonly reason: "auto" | "manual"
               readonly model?: { readonly id: string; readonly providerID: string; readonly variant?: string }
-              readonly providerState?: { readonly [x: string]: JsonValue }
+              readonly native?: { readonly [x: string]: JsonValue }
               readonly summary: string
               readonly recent: string
               readonly providerContext?: {
