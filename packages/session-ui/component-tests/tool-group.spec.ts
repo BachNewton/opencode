@@ -78,6 +78,9 @@ story("summarizes subagents as Agent while retaining their card titles", async (
   await expect(prefix).toHaveText("Used")
   await expect(count).toHaveText("4")
   await expect(title).toHaveText("Shell, Read, Agent")
+  expect(await prefix.evaluate((node) => node.textContent)).toBe("Used")
+  expect(await prefix.locator("..").evaluate((node) => getComputedStyle(node).columnGap)).toBe("6px")
+  expect(await count.evaluate((node) => getComputedStyle(node).fontVariantNumeric)).toBe("tabular-nums")
   const colors = await Promise.all(
     [prefix, count, title].map((part) => part.evaluate((node) => getComputedStyle(node).color)),
   )
