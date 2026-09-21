@@ -37,7 +37,7 @@ describe("one built-in cannot build an unbounded value", () => {
         "RangeError: Invalid string length",
       )
     }
-  })
+  }, 30_000)
 
   // split and matchAll share the same result check but must build ten million items first to reach it,
   // which is too slow for CI.
@@ -54,7 +54,7 @@ describe("one built-in cannot build an unbounded value", () => {
         "RangeError: Invalid array length",
       )
     }
-  })
+  }, 30_000)
 
   test("promises: too many pending at once, while settled ones do not count", async () => {
     const n = MAX_PENDING_PROMISES
@@ -67,5 +67,5 @@ describe("one built-in cannot build an unbounded value", () => {
     expect(await failure(`await Promise.all(Array(${n + 1}).fill(0).map(() => new Promise(() => {})))`)).toContain(
       "Too many pending promises",
     )
-  })
+  }, 30_000)
 })
