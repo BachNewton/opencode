@@ -2,7 +2,6 @@ import { Button } from "@opencode/ui/button"
 import { Badge } from "@opencode/ui/badge"
 import { useDialog } from "@opencode/ui/context/dialog"
 import { Icon } from "@opencode/ui/icon"
-import { ProviderIcon } from "@opencode/ui/provider-icon"
 import { OpenCodeLogo } from "@/providers/opencode-logo"
 import { showToast } from "@/shell/notifications/toast"
 import { popularProviders, useProviders } from "@/providers/catalog/providers"
@@ -14,6 +13,7 @@ import { useLanguage } from "@/runtime/i18n/language"
 import { useServerSDK } from "@/runtime/server/client"
 import { useData } from "@/runtime/server/current"
 import { DialogConnectProvider, useProviderConnectController } from "@/providers/connect/dialog"
+import { ProviderModelIcon } from "@/providers/models/provider-group"
 import { SettingsList } from "@/settings/list"
 import "@/settings/settings.css"
 
@@ -30,8 +30,6 @@ const PROVIDER_NOTES = [
   { match: (id: string) => id === "openrouter", key: "dialog.provider.openrouter.note" },
   { match: (id: string) => id === "vercel", key: "dialog.provider.vercel.note" },
 ] as const
-
-const PROVIDER_ICON_SIZE = 16
 
 export const SettingsProviders: Component<{
   directory: string | undefined
@@ -233,14 +231,7 @@ export const SettingsProviders: Component<{
                           <div class="settings-provider-lead">
                             <Show
                               when={item.id === "opencode"}
-                              fallback={
-                                <ProviderIcon
-                                  id={item.id}
-                                  width={PROVIDER_ICON_SIZE}
-                                  height={PROVIDER_ICON_SIZE}
-                                  class="settings-provider-icon shrink-0"
-                                />
-                              }
+                              fallback={<ProviderModelIcon provider={item} class="settings-provider-icon shrink-0" />}
                             >
                               <OpenCodeLogo class="settings-provider-icon size-4 shrink-0" />
                             </Show>
@@ -354,14 +345,7 @@ export const SettingsProviders: Component<{
                   <div class="settings-provider-lead">
                     <Show
                       when={item.id === "opencode"}
-                      fallback={
-                        <ProviderIcon
-                          id={item.id}
-                          width={PROVIDER_ICON_SIZE}
-                          height={PROVIDER_ICON_SIZE}
-                          class="settings-provider-icon shrink-0"
-                        />
-                      }
+                      fallback={<ProviderModelIcon provider={item} class="settings-provider-icon shrink-0" />}
                     >
                       <OpenCodeLogo class="settings-provider-icon size-4 shrink-0" />
                     </Show>

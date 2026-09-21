@@ -3,7 +3,6 @@ import { Badge } from "@opencode/ui/badge"
 import { useDialog } from "@opencode/ui/context/dialog"
 import { Icon } from "@opencode/ui/icon"
 import { List } from "@opencode/ui/list"
-import { ProviderIcon } from "@opencode/ui/provider-icon"
 import { Spinner } from "@opencode/ui/spinner"
 import { Loader } from "@opencode/ui/loader"
 import { TextField } from "@opencode/ui/text-field"
@@ -152,7 +151,7 @@ export const DialogConnectProvider: Component<{
               <div class="flex items-center gap-2">
                 <Show
                   when={provider().id === "opencode"}
-                  fallback={<ProviderIcon id={provider().id} class="size-4 shrink-0" />}
+                  fallback={<ProviderModelIcon provider={provider()} class="shrink-0" />}
                 >
                   <OpenCodeLogo class="size-4 shrink-0" />
                 </Show>
@@ -307,7 +306,7 @@ function ProviderPicker(props: { directory?: string; onSelect: (provider: string
                       >
                         <Show
                           when={provider.id === "opencode"}
-                          fallback={<ProviderIcon id={provider.id} class="size-4 shrink-0 text-v2-icon-icon-base" />}
+                          fallback={<ProviderModelIcon provider={provider} class="shrink-0 text-v2-icon-icon-base" />}
                         >
                           <OpenCodeLogo class="size-4 shrink-0" />
                         </Show>
@@ -1154,7 +1153,7 @@ function ProviderConnection(props: {
         >
           <Show
             when={props.provider === "opencode"}
-            fallback={<ProviderIcon id={props.provider} class="mt-0.5 size-4 shrink-0 text-v2-icon-icon-base" />}
+            fallback={<ProviderModelIcon provider={provider()} class="mt-0.5 shrink-0 text-v2-icon-icon-base" />}
           >
             <OpenCodeLogo class="size-4 shrink-0" />
           </Show>

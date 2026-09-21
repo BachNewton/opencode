@@ -88,13 +88,6 @@ export const DialogManageModels: Component = () => {
   const expanded = (key: string) => searching() || !store.collapsed[key]
   const providerName = (provider: ModelItem["provider"]) =>
     provider.id === "opencode" ? language.t("provider.connect.opencode.freeName") : provider.name
-  const enabled = createMemo(() =>
-    local.model.list().reduce((counts, item) => {
-      if (!local.model.visible({ providerID: item.provider.id, modelID: item.id })) return counts
-      counts.set(item.provider.id, (counts.get(item.provider.id) ?? 0) + 1)
-      return counts
-    }, new Map<string, number>()),
-  )
 
   function ModelRows(props: { items: ModelItem[] }) {
     return (
@@ -266,14 +259,12 @@ export const DialogManageModels: Component = () => {
                             <div class="provider-model-groups settings-models-console-groups">
                               <For each={console().providers}>
                                 {(group) => {
-                                  const count = () => enabled().get(group.category) ?? 0
                                   return (
                                     <ProviderModelGroup
                                       provider={group.items[0].provider}
                                       name={consoleProviderName(console().managed, group.items[0].provider.name)}
                                       expanded={expanded(group.category)}
                                       disabled={searching()}
-                                      detail={language.plural("settings.models.enabled", count(), { count: count() })}
                                       onSetVisibility={(visible) => setProviderVisibility(group.category, visible)}
                                       onExpandedChange={(value) => setStore("collapsed", group.category, !value)}
                                     >

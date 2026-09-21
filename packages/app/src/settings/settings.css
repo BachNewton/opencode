@@ -1180,16 +1180,9 @@
   transform: rotate(90deg);
 }
 
-.provider-model-group-detail {
-  flex-shrink: 0;
-  font-size: 13px;
-  font-weight: 440;
-  line-height: var(--line-height-compact);
-  color: var(--v2-text-text-faint);
-  font-variant-numeric: tabular-nums;
-}
-
 .provider-model-group-actions {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-shrink: 0;
   align-items: center;

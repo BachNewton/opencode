@@ -1,11 +1,21 @@
-import { createEffect, createMemo, createResource, createSignal, For, onCleanup, onMount, Show, type JSX } from "solid-js"
+import {
+  createEffect,
+  createMemo,
+  createResource,
+  createSignal,
+  For,
+  onCleanup,
+  onMount,
+  Show,
+  type JSX,
+} from "solid-js"
 import { createStore } from "solid-js/store"
 import { FileIcon } from "@opencode/ui/file-icon"
 import { Icon } from "@opencode/ui/icon"
 import { IconButton } from "@opencode/ui/icon-button"
 import { createAnimatedPresence } from "@/runtime/animated-presence"
 import { resolveBlobUrl } from "@/runtime/persistence/drafts"
-import { ProviderIcon } from "@opencode/ui/provider-icon"
+import { ProviderModelIcon } from "@/providers/models/provider-group"
 import { useI18n } from "@opencode/ui/context/i18n"
 import { Button } from "@opencode/ui/button"
 import { Keybind } from "@opencode/ui/keybind"
@@ -494,9 +504,7 @@ export function ComposerAttachments(props: {
   const i18n = useI18n()
   const percent = (upload: Upload) => (upload.size === 0 ? 100 : Math.floor((upload.loaded / upload.size) * 100))
   return (
-    <Show
-      when={props.attachments.length > 0 || (props.uploads?.length ?? 0) > 0 || (props.comments?.length ?? 0) > 0}
-    >
+    <Show when={props.attachments.length > 0 || (props.uploads?.length ?? 0) > 0 || (props.comments?.length ?? 0) > 0}>
       <div data-component="composer-attachments" data-slot="composer-attachments" class="relative">
         <div
           data-slot="composer-attachments-scroll"
@@ -688,7 +696,7 @@ function ComposerEditorConfiguredSelect(props: {
       current={current()}
       currentIcon={
         <Show when={props.model && providerID()}>
-          <ProviderIcon id={providerID()!} class="size-4 shrink-0 opacity-60" />
+          {(id) => <ProviderModelIcon provider={{ id: id(), name: id() }} class="shrink-0 opacity-60" />}
         </Show>
       }
       onSelect={props.control.onSelect}

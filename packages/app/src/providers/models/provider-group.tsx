@@ -4,12 +4,17 @@ import { iconNames, type IconName } from "@opencode/ui/icons/provider"
 import { Menu } from "@opencode/ui/menu"
 import { ProviderIcon } from "@opencode/ui/provider-icon"
 import type { JSX } from "solid-js"
-import { Show } from "solid-js"
+import { Match, Show, Switch } from "solid-js"
 import { OpenCodeLogo } from "@/providers/opencode-logo"
 import { useLanguage } from "@/runtime/i18n/language"
+import customManagedProvider from "@/providers/custom-managed-provider.svg"
 import "@/settings/settings.css"
 
 type ModelProvider = { id: string; canonical?: string; name: string }
+
+export function CustomManagedProviderIcon(props: { class?: string }) {
+  return <img data-component="custom-managed-provider-icon" src={customManagedProvider} alt="" class={props.class} />
+}
 
 export function ProviderModelIcon(props: { provider: ModelProvider; class?: string }) {
   const icon = () =>
@@ -17,15 +22,20 @@ export function ProviderModelIcon(props: { provider: ModelProvider; class?: stri
       props.provider.canonical,
       props.provider.canonical?.replace(/-token-plan$/, ""),
       props.provider.id.replace(/^console-/, ""),
-    ].find((id): id is IconName => !!id && iconNames.includes(id as IconName)) ?? props.provider.id
+    ].find((id): id is IconName => !!id && id !== "synthetic" && iconNames.includes(id as IconName))
 
   return (
-    <Show
-      when={props.provider.id === "opencode"}
-      fallback={<ProviderIcon id={icon()} width={16} height={16} class={props.class} />}
-    >
-      <OpenCodeLogo class={`size-4 ${props.class ?? ""}`} />
-    </Show>
+    <Switch>
+      <Match when={props.provider.id === "opencode"}>
+        <OpenCodeLogo class={`size-4 ${props.class ?? ""}`} />
+      </Match>
+      <Match when={icon()} keyed>
+        {(id) => <ProviderIcon id={id} width={16} height={16} class={props.class} />}
+      </Match>
+      <Match when={true}>
+        <CustomManagedProviderIcon class={`size-4 ${props.class ?? ""}`} />
+      </Match>
+    </Switch>
   )
 }
 
@@ -34,7 +44,6 @@ export function ProviderModelGroup(props: {
   name?: string
   expanded: boolean
   disabled?: boolean
-  detail?: JSX.Element
   onSetVisibility?: (visible: boolean) => void
   children: JSX.Element
   ref?: (element: HTMLElement) => void
@@ -67,11 +76,8 @@ export function ProviderModelGroup(props: {
             />
           </span>
         </button>
-        <Show when={props.detail || props.onSetVisibility}>
+        <Show when={props.onSetVisibility}>
           <div class="provider-model-group-actions">
-            <Show when={props.detail}>
-              <span class="provider-model-group-detail">{props.detail}</span>
-            </Show>
             <Show when={props.onSetVisibility} keyed>
               {(setVisibility) => (
                 <Menu gutter={4} modal={false} placement="bottom-end">

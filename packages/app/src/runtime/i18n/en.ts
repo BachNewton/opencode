@@ -1402,8 +1402,6 @@ export const dict = {
   "settings.providers.tag.other": "Other",
   "settings.models.title": "Models",
   "settings.models.description": "Choose which models appear in model picker",
-  "settings.models.enabled.one": "{{count}} model enabled",
-  "settings.models.enabled.other": "{{count}} models enabled",
   "settings.models.enableAll": "Enable all models",
   "settings.models.disableAll": "Disable all models",
   "settings.agents.title": "Agents",

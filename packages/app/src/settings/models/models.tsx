@@ -103,13 +103,6 @@ export const SettingsModels: Component<{
   const expanded = (key: string) => searching() || !store.collapsed[key]
   const providerName = (provider: ModelItem["provider"]) =>
     provider.id === "opencode" ? language.t("provider.connect.opencode.freeName") : provider.name
-  const enabled = createMemo(() =>
-    models.list().reduce((counts, item) => {
-      if (!models.visible({ providerID: item.provider.id, modelID: item.id })) return counts
-      counts.set(item.provider.id, (counts.get(item.provider.id) ?? 0) + 1)
-      return counts
-    }, new Map<string, number>()),
-  )
   const setProviderVisibility = (providerID: string, visible: boolean) =>
     models
       .list()
@@ -307,7 +300,6 @@ export const SettingsModels: Component<{
                         <div class="provider-model-groups settings-models-console-groups">
                           <For each={console().providers}>
                             {(group) => {
-                              const count = () => enabled().get(group.category) ?? 0
                               return (
                                 <ProviderModelGroup
                                   ref={(element) => sections.set(group.category, element)}
@@ -315,7 +307,6 @@ export const SettingsModels: Component<{
                                   name={consoleProviderName(console().managed, group.items[0].provider.name)}
                                   expanded={expanded(group.category)}
                                   disabled={searching()}
-                                  detail={language.plural("settings.models.enabled", count(), { count: count() })}
                                   onSetVisibility={(visible) => setProviderVisibility(group.category, visible)}
                                   onExpandedChange={(value) => setStore("collapsed", group.category, !value)}
                                 >
