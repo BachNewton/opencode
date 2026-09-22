@@ -83,7 +83,9 @@ export function update(adapter: Adapter, event: SessionEvent.DurableEvent) {
       "session.message.content.updated": (event) =>
         updateOwnedAssistant(event.data.messageID, (draft) => {
           draft.content = castDraft(
-            Schema.decodeUnknownSync(Schema.Array(SessionMessage.AssistantContent))(event.data.content),
+            Schema.decodeUnknownSync(Schema.Array(SessionMessage.AssistantContent))(
+              SessionMessage.persistedContent(event.data.content),
+            ),
           )
         }),
       "session.usage.recorded": () => Effect.void,

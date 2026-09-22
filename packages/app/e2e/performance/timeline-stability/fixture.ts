@@ -703,7 +703,7 @@ function messageContent(
     return {
       type: "reasoning",
       text: part.text,
-      state: jsonRecord(part.metadata),
+      native: jsonRecord(part.metadata),
       time: part.time
         ? { created: part.time.start, ...(part.time.end === undefined ? {} : { completed: part.time.end }) }
         : undefined,

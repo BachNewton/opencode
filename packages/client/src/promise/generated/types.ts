@@ -1354,15 +1354,6 @@ export type SessionToolCalled = {
   }
 }
 
-export type SessionMessageAssistantText1 = { type: "text"; text: string; native?: SessionMessageProviderState1 }
-
-export type SessionMessageAssistantReasoning1 = {
-  type: "reasoning"
-  text: string
-  native?: SessionMessageProviderState1
-  time?: { created: number; completed?: number }
-}
-
 export type ToolContent1 = ToolTextContent | ToolFileContent1
 
 export type FormNumberField = {
@@ -2236,8 +2227,13 @@ export type SessionMessageAssistant = {
 }
 
 export type SessionMessageAssistantContentEncoded =
-  | SessionMessageAssistantText1
-  | SessionMessageAssistantReasoning1
+  | { type: "text"; text: string; state?: SessionMessageProviderState1 }
+  | {
+      type: "reasoning"
+      text: string
+      time?: { created: number; completed?: number }
+      state?: SessionMessageProviderState1
+    }
   | SessionMessageAssistantTool1
 
 export type FormInfo = { id: string; sessionID: string; title: string; metadata?: FormMetadata; fields: FormFields }

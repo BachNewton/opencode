@@ -17320,7 +17320,7 @@
           "rawFinish": {
             "type": "string"
           },
-          "providerState": {
+          "native": {
             "$ref": "#/components/schemas/Session.Message.ProviderState_4"
           },
           "cost": {
@@ -17349,7 +17349,7 @@
           "text": {
             "type": "string"
           },
-          "state": {
+          "native": {
             "$ref": "#/components/schemas/Session.Message.ProviderState_1"
           },
           "time": {
@@ -17396,7 +17396,7 @@
           "text": {
             "type": "string"
           },
-          "state": {
+          "native": {
             "$ref": "#/components/schemas/Session.Message.ProviderState"
           }
         },
@@ -17509,7 +17509,7 @@
           "model": {
             "$ref": "#/components/schemas/Model.Ref"
           },
-          "providerState": {
+          "native": {
             "$ref": "#/components/schemas/Session.Message.ProviderState_5"
           },
           "summary": {

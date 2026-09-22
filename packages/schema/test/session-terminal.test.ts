@@ -41,6 +41,30 @@ test("assistant terminal diagnostics remain optional and round trip", () => {
     content: [{ type: "text", native: { signature: "sig" } }],
   })
   expect(encode(decode(legacy))).not.toHaveProperty("providerState")
+  expect(SessionMessage.persisted(assistant)).toBe(assistant)
+})
+
+test("replayed content updates keep the stored provider blob shape", () => {
+  const content = [
+    { type: "text", text: "hello", state: { signature: "sig" } },
+    { type: "reasoning", text: "think", state: { id: "rs_1" }, time: { created: 1 } },
+    { type: "tool", id: "call", name: "read", state: { status: "streaming", input: "" }, time: { created: 1 } },
+  ] as const
+  const decoded = Schema.decodeUnknownSync(SessionEvent.MessageContentUpdated.data)({
+    sessionID: "ses_terminal",
+    messageID: "msg_terminal",
+    content,
+  })
+  expect(decoded.content).toEqual(content)
+  expect(
+    Schema.decodeUnknownSync(Schema.Array(SessionMessage.AssistantContent))(
+      SessionMessage.persistedContent(decoded.content),
+    ),
+  ).toMatchObject([
+    { type: "text", native: { signature: "sig" } },
+    { type: "reasoning", native: { id: "rs_1" } },
+    { type: "tool", state: { status: "streaming" } },
+  ])
 })
 
 test("failed steps only override the assistant finish for content filters", () => {

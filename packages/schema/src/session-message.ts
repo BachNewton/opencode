@@ -1,6 +1,6 @@
 export * as SessionMessage from "./session-message.js"
 
-import { Predicate, Schema } from "effect"
+import { Predicate, Schema, Struct } from "effect"
 import { SessionProviderContext } from "./session-provider-context.js"
 import { optional } from "./schema.js"
 import { Content } from "./tool.js"
@@ -196,7 +196,18 @@ export const AssistantContent = Schema.Union([AssistantText, AssistantReasoning,
 )
 export type AssistantContent = AssistantText | AssistantReasoning | AssistantTool
 
-export const AssistantContentEncoded = Schema.toEncoded(AssistantContent).annotate({
+/**
+ * Frozen at the shape older releases stored: text and reasoning carried their
+ * provider blob as `state`. Only replayed durable events still use it; read it
+ * through `persistedContent` before decoding as `AssistantContent`.
+ */
+export const AssistantContentEncoded = Schema.toEncoded(
+  Schema.Union([
+    Schema.Struct({ ...Struct.omit(AssistantText.fields, ["native"]), state: ProviderState.pipe(optional) }),
+    Schema.Struct({ ...Struct.omit(AssistantReasoning.fields, ["native"]), state: ProviderState.pipe(optional) }),
+    AssistantTool,
+  ]).pipe(Schema.toTaggedUnion("type")),
+).annotate({
   identifier: "Session.Message.AssistantContent.Encoded",
 })
 export type AssistantContentEncoded = typeof AssistantContentEncoded.Type
@@ -325,13 +336,17 @@ export function persisted(input: unknown) {
   const message =
     input.type === "assistant" || input.type === "compaction" ? rename(input, "providerState", "native") : input
   if (message.type !== "assistant" || !Array.isArray(message.content)) return message
-  return {
-    ...message,
-    content: message.content.map((part) => {
-      if (!Predicate.isObject(part) || (part.type !== "text" && part.type !== "reasoning")) return part
-      return rename(part, "state", "native")
-    }),
-  }
+  const content = persistedContent(message.content)
+  return content === message.content ? message : { ...message, content }
+}
+
+/** Reads assistant content stored before text and reasoning blobs were renamed to `native`. */
+export function persistedContent(content: ReadonlyArray<unknown>) {
+  const next = content.map((part) => {
+    if (!Predicate.isObject(part) || (part.type !== "text" && part.type !== "reasoning")) return part
+    return rename(part, "state", "native")
+  })
+  return next.every((part, index) => part === content[index]) ? content : next
 }
 
 function rename(record: Record<string, unknown>, from: string, to: string) {

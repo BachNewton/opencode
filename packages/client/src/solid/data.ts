@@ -914,6 +914,7 @@ export function createData(config: CreateDataInput) {
       case "session.text.ended":
         message.editText(event.data.sessionID, event.data.assistantMessageID, (text) => {
           text.text = event.data.text
+          text.native = event.data.state
         })
         return
       case "session.tool.input.started":
