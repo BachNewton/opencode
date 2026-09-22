@@ -7,14 +7,14 @@ import { THEME_OPENAUTH } from "@openauthjs/openauth/ui/theme"
 import { GithubProvider } from "@openauthjs/openauth/provider/github"
 import { GoogleOidcProvider } from "@openauthjs/openauth/provider/google"
 import { CloudflareStorage } from "@openauthjs/openauth/storage/cloudflare"
-import { Workspace } from "@opencode/console-core/workspace.js"
 import { Actor } from "@opencode/console-core/actor.js"
 import { Resource } from "@opencode/console-resource"
 import { User } from "@opencode/console-core/user.js"
-import { and, Database, eq, isNull, or } from "@opencode/console-core/drizzle/index.js"
+import { and, Database, eq, isNotNull, isNull, or } from "@opencode/console-core/drizzle/index.js"
 import { WorkspaceTable } from "@opencode/console-core/schema/workspace.sql.js"
 import { UserTable } from "@opencode/console-core/schema/user.sql.js"
 import { AuthTable } from "@opencode/console-core/schema/auth.sql.js"
+import { BillingTable } from "@opencode/console-core/schema/billing.sql.js"
 import { Identifier } from "@opencode/console-core/identifier.js"
 
 type Env = {
@@ -160,7 +160,29 @@ export default {
           matches.find((x) => x.provider === "email")?.accountID
         if (!accountID) return Response.redirect("https://console.opencode.ai", 302)
 
-        await Database.use(async (tx) =>
+        const black = await Actor.provide("account", { accountID, email }, async () => {
+          await User.joinInvitedWorkspaces()
+          return Database.use((tx) =>
+            tx
+              .select({ id: UserTable.id })
+              .from(UserTable)
+              .innerJoin(WorkspaceTable, eq(WorkspaceTable.id, UserTable.workspaceID))
+              .innerJoin(BillingTable, eq(BillingTable.workspaceID, UserTable.workspaceID))
+              .where(
+                and(
+                  eq(UserTable.accountID, accountID),
+                  isNull(UserTable.timeDeleted),
+                  isNull(WorkspaceTable.timeDeleted),
+                  isNotNull(BillingTable.subscriptionID),
+                ),
+              )
+              .limit(1)
+              .then((rows) => rows[0]),
+          )
+        })
+        if (!black) return Response.redirect("https://console.opencode.ai", 302)
+
+        await Database.use((tx) =>
           tx
             .insert(AuthTable)
             .values([
@@ -184,26 +206,6 @@ export default {
             }),
         )
 
-        // Get workspace
-        await Actor.provide("account", { accountID, email }, async () => {
-          await User.joinInvitedWorkspaces()
-          const workspaces = await Database.use((tx) =>
-            tx
-              .select({ id: WorkspaceTable.id })
-              .from(WorkspaceTable)
-              .innerJoin(UserTable, eq(UserTable.workspaceID, WorkspaceTable.id))
-              .where(
-                and(
-                  eq(UserTable.accountID, accountID),
-                  isNull(UserTable.timeDeleted),
-                  isNull(WorkspaceTable.timeDeleted),
-                ),
-              ),
-          )
-          if (workspaces.length === 0) {
-            await Workspace.create({ name: "Default" })
-          }
-        })
         return ctx.subject("account", accountID, { accountID, email, newAccount: false })
       },
     }).fetch(request, env, ctx)
