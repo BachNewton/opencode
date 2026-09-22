@@ -7,7 +7,6 @@ import { THEME_OPENAUTH } from "@openauthjs/openauth/ui/theme"
 import { GithubProvider } from "@openauthjs/openauth/provider/github"
 import { GoogleOidcProvider } from "@openauthjs/openauth/provider/google"
 import { CloudflareStorage } from "@openauthjs/openauth/storage/cloudflare"
-import { Account } from "@opencode/console-core/account.js"
 import { Workspace } from "@opencode/console-core/workspace.js"
 import { Actor } from "@opencode/console-core/actor.js"
 import { Resource } from "@opencode/console-resource"
@@ -142,61 +141,48 @@ export default {
           throw new Error("Invalid email")
         }
 
-        // Get account
-        let newAccount = false
-        const accountID = await (async () => {
-          const matches = await Database.use(async (tx) =>
-            tx
-              .select({
-                provider: AuthTable.provider,
-                accountID: AuthTable.accountID,
-              })
-              .from(AuthTable)
-              .where(
-                or(
-                  and(eq(AuthTable.provider, response.provider), eq(AuthTable.subject, subject)),
-                  and(eq(AuthTable.provider, "email"), eq(AuthTable.subject, email)),
-                ),
+        const matches = await Database.use(async (tx) =>
+          tx
+            .select({
+              provider: AuthTable.provider,
+              accountID: AuthTable.accountID,
+            })
+            .from(AuthTable)
+            .where(
+              or(
+                and(eq(AuthTable.provider, response.provider), eq(AuthTable.subject, subject)),
+                and(eq(AuthTable.provider, "email"), eq(AuthTable.subject, email)),
               ),
-          )
-          const idByProvider = matches.find((x) => x.provider === response.provider)?.accountID
-          const idByEmail = matches.find((x) => x.provider === "email")?.accountID
-          if (idByProvider && idByEmail) return idByProvider
+            ),
+        )
+        const accountID =
+          matches.find((x) => x.provider === response.provider)?.accountID ??
+          matches.find((x) => x.provider === "email")?.accountID
+        if (!accountID) return Response.redirect("https://console.opencode.ai", 302)
 
-          // create account if not found
-          let accountID = idByProvider ?? idByEmail
-          if (!accountID) {
-            console.log("creating account for", email)
-            accountID = await Account.create({})
-            newAccount = true
-          }
-
-          await Database.use(async (tx) =>
-            tx
-              .insert(AuthTable)
-              .values([
-                {
-                  id: Identifier.create("auth"),
-                  accountID,
-                  provider: response.provider,
-                  subject,
-                },
-                {
-                  id: Identifier.create("auth"),
-                  accountID,
-                  provider: "email",
-                  subject: email,
-                },
-              ])
-              .onDuplicateKeyUpdate({
-                set: {
-                  timeDeleted: null,
-                },
-              }),
-          )
-
-          return accountID
-        })()
+        await Database.use(async (tx) =>
+          tx
+            .insert(AuthTable)
+            .values([
+              {
+                id: Identifier.create("auth"),
+                accountID,
+                provider: response.provider,
+                subject,
+              },
+              {
+                id: Identifier.create("auth"),
+                accountID,
+                provider: "email",
+                subject: email,
+              },
+            ])
+            .onDuplicateKeyUpdate({
+              set: {
+                timeDeleted: null,
+              },
+            }),
+        )
 
         // Get workspace
         await Actor.provide("account", { accountID, email }, async () => {
@@ -218,7 +204,7 @@ export default {
             await Workspace.create({ name: "Default" })
           }
         })
-        return ctx.subject("account", accountID, { accountID, email, newAccount })
+        return ctx.subject("account", accountID, { accountID, email, newAccount: false })
       },
     }).fetch(request, env, ctx)
     return result
