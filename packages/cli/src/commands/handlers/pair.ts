@@ -29,7 +29,19 @@ export default Runtime.handler(
         ...info.urls.slice(1).map((url) => `            ${url}`),
         `  Username  ${info.username}`,
         `  Password  ${info.password}`,
-        ...(link ? ["", "  Scan to pair", "", renderPairingQr(link), "", `  Link      ${link}`] : []),
+        ...(link
+          ? [
+              "",
+              "  Scan to pair",
+              "",
+              renderUnicodeCompact(link, { border: 2 })
+                .split("\n")
+                .map((line) => "  " + line)
+                .join(EOL),
+              "",
+              `  Link      ${link}`,
+            ]
+          : []),
         "",
       ].join(EOL) + EOL,
     )
@@ -40,11 +52,3 @@ export default Runtime.handler(
     process.stderr.write(`  Run \`opencode service set hostname 0.0.0.0\` to access the service remotely.${EOL}${EOL}`)
   }),
 )
-
-export function renderPairingQr(link: string, newline = EOL) {
-  // uqr always separates rows with LF, including on Windows.
-  return renderUnicodeCompact(link, { border: 2 })
-    .split("\n")
-    .map((line) => "  " + line)
-    .join(newline)
-}
