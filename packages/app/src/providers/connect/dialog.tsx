@@ -213,7 +213,12 @@ function ProviderPicker(props: { directory?: string; onSelect: (provider: string
       custom(),
       ...integrations
         .list()
-        .filter((integration) => integration.connections.length === 0 && !connected().has(integration.id)),
+        .filter((integration) => integration.connections.length === 0 && !connected().has(integration.id))
+        .map((integration) =>
+          integration.id === "opencode"
+            ? { ...integration, name: language.t("provider.connect.opencode.name") }
+            : integration,
+        ),
     ]
     if (!query) return values
     return values.filter((provider) => `${provider.id} ${provider.name}`.toLowerCase().includes(query))
@@ -1123,18 +1128,8 @@ function ProviderConnection(props: {
         </div>
         <div
           data-component="first-provider-model-footer"
-          class="-mx-5 flex h-15 shrink-0 items-center justify-between border-t border-v2-border-border-muted px-4"
+          class="-mx-5 flex h-15 shrink-0 items-center justify-end border-t border-v2-border-border-muted px-4"
         >
-          <Button
-            variant="ghost-muted"
-            icon="outline-sliders"
-            onClick={() => {
-              dialog.close()
-              surface.open("models")
-            }}
-          >
-            {language.t("dialog.model.manage")}
-          </Button>
           <Button variant="contrast" disabled={!selectedModel()} onClick={() => void startWithModel()}>
             {language.t("common.continue")}
           </Button>
@@ -1171,9 +1166,7 @@ function ProviderConnection(props: {
                 >
                   {language.t("provider.connect.title.anthropicProMax")}
                 </Match>
-                <Match when={desktopConsole}>
-                  {language.t("provider.connect.title", { provider: language.t("provider.connect.opencode.name") })}
-                </Match>
+                <Match when={desktopConsole}>{language.t("provider.connect.opencode.name")}</Match>
                 <Match when={true}>{language.t("provider.connect.title", { provider: provider().name })}</Match>
               </Switch>
             </DialogTitle>

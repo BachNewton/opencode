@@ -262,7 +262,7 @@ async function fixture(
     await expect(tip).toContainText("Connect to 75+ providers")
     await tip.getByRole("button", { name: /Connect to 75\+ providers/ }).click()
     await dialog.getByRole("button", { name: /^OpenCode / }).click()
-    await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+    await dialog.getByRole("button", { name: "Continue in the browser" }).click()
     await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
     return { state, dialog }
   }
@@ -274,23 +274,23 @@ async function fixture(
     .getByRole("dialog")
     .getByRole("button", { name: /^OpenCode / })
     .click()
-  await expect(dialog.getByRole("button", { name: "Continue to OpenCode Console" })).toBeEnabled()
+  await expect(dialog.getByRole("button", { name: "Continue in the browser" })).toBeEnabled()
   return { state, dialog }
 }
 
 test("Console account is primary and the code is displayed without a copy-code step", async ({ page }) => {
   const { state, dialog } = await fixture(page)
-  await expect(dialog.getByRole("heading", { name: "Connect OpenCode", exact: true })).toBeVisible()
+  await expect(dialog.getByRole("heading", { name: "OpenCode Console", exact: true })).toBeVisible()
   await expect(dialog.getByText("Service account?", { exact: true })).toBeVisible()
   await expect(dialog.getByRole("button", { name: "Use API key", exact: true })).toBeVisible()
   const shell = await dialog.boundingBox()
   const back = await dialog.getByRole("button", { name: "Navigate back" }).boundingBox()
-  const heading = await dialog.getByRole("heading", { name: "Connect OpenCode", exact: true }).boundingBox()
+  const heading = await dialog.getByRole("heading", { name: "OpenCode Console", exact: true }).boundingBox()
   const logo = await dialog.locator('[data-component="opencode-logo"]').boundingBox()
   const description = await dialog
     .getByText("Sign in with your OpenCode Console account to use the available models.")
     .boundingBox()
-  const primary = await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).boundingBox()
+  const primary = await dialog.getByRole("button", { name: "Continue in the browser" }).boundingBox()
   const service = await dialog.locator('[data-component="console-service-account"]').boundingBox()
   if (!shell || !back || !heading || !logo || !description || !primary || !service)
     throw new Error("Missing dialog layout")
@@ -304,7 +304,7 @@ test("Console account is primary and the code is displayed without a copy-code s
   expect(service.y - (primary.y + primary.height)).toBe(20)
   await page.screenshot({ path: test.info().outputPath("connect-console-light.png") })
   const popup = page.waitForEvent("popup")
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   const consolePage = await popup
   await expect(consolePage).toHaveURL(/user_code=TFXS-STXG/)
   await expect(consolePage).toHaveURL(/client_id=opencode-desktop/)
@@ -315,7 +315,7 @@ test("Console account is primary and the code is displayed without a copy-code s
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
   await expect(dialog.getByRole("textbox")).toHaveCount(0)
   await expect(dialog.getByRole("button", { name: "Copy sign-in link" })).toBeVisible()
-  const authHeading = await dialog.getByRole("heading", { name: "Connecting to OpenCode" }).boundingBox()
+  const authHeading = await dialog.getByRole("heading", { name: "Connecting to OpenCode Console" }).boundingBox()
   const authDescription = await dialog
     .getByText("Continue in your browser. Confirm the code shown there matches the one below.")
     .boundingBox()
@@ -339,8 +339,8 @@ test("Console account is primary and the code is displayed without a copy-code s
   await expect(page.locator("html")).toHaveAttribute("data-color-scheme", "dark")
   await page.screenshot({ path: test.info().outputPath("console-auth-dark.png") })
   state.status = "complete"
-  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode" })).toBeVisible()
-  const list = dialog.getByRole("radiogroup", { name: "Models available from OpenCode" })
+  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode Console" })).toBeVisible()
+  const list = dialog.getByRole("radiogroup", { name: "Models available from OpenCode Console" })
   const available = dialog.locator('[data-component="available-models-heading"]')
   await expect(available).toContainText("Available models")
   await expect(available).toContainText("Anomaly")
@@ -431,7 +431,7 @@ test("provider form returns to the picker and its backdrop closes", async ({ pag
 test("Manage models groups Console providers like Settings", async ({ page }) => {
   const { state, dialog } = await fixture(page, false, { draft: true, paidModels: true, directProvider: true })
   state.status = "complete"
-  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode" })).toBeVisible()
+  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode Console" })).toBeVisible()
   await dialog.getByRole("button", { name: "Continue", exact: true }).click()
   await page.locator('[data-action="composer-model"]').click()
   const search = page.getByPlaceholder("Search models", { exact: true })
@@ -441,7 +441,7 @@ test("Manage models groups Console providers like Settings", async ({ page }) =>
 
   await expect(dialog.getByRole("heading", { name: "Manage models", exact: true })).toBeVisible()
   const managed = dialog.locator('[data-component="manage-models-console"]')
-  await expect(managed.getByRole("button", { name: "OpenCode Anomaly", exact: true })).toHaveAttribute(
+  await expect(managed.getByRole("button", { name: "OpenCode Console Anomaly", exact: true })).toHaveAttribute(
     "aria-expanded",
     "true",
   )
@@ -453,20 +453,22 @@ test("Manage models groups Console providers like Settings", async ({ page }) =>
   await expect(dialog.getByRole("button", { name: "OpenRouter", exact: true })).toBeVisible()
   await dialog.getByRole("button", { name: "Connect provider", exact: true }).click()
   await expect(dialog.getByRole("heading", { name: "Connect provider", exact: true })).toBeVisible()
-  await expect(dialog.getByRole("button", { name: /^OpenCode Reliable optimized models/ })).toHaveCount(0)
+  await expect(dialog.getByRole("button", { name: /^OpenCode Console Reliable optimized models/ })).toHaveCount(0)
 })
 
-test("Manage models opens the Models settings page", async ({ page }) => {
+test("connected dialog omits Manage models and Settings Models stays grouped", async ({ page }) => {
   const { state, dialog } = await fixture(page)
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
   state.status = "complete"
-  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode" })).toBeVisible()
-  await dialog.getByRole("button", { name: "Manage models", exact: true }).click()
+  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode Console" })).toBeVisible()
+  await expect(dialog.getByRole("button", { name: "Manage models", exact: true })).toHaveCount(0)
+  await dialog.getByRole("button", { name: "Close", exact: true }).click()
   await expect(dialog).toBeHidden()
+  await page.getByRole("tab", { name: "Models", exact: true }).click()
   await expect(page.getByRole("tab", { name: "Models", exact: true })).toHaveAttribute("aria-selected", "true")
   const console = page.locator('[data-component="settings-models-console"]')
-  const consoleToggle = console.getByRole("button", { name: "OpenCode Anomaly", exact: true })
+  const consoleToggle = console.getByRole("button", { name: "OpenCode Console Anomaly", exact: true })
   await expect(consoleToggle).toHaveAttribute("aria-expanded", "true")
   const groups = console.locator('[data-component="provider-model-group"]')
   await expect(groups).toHaveCount(2)
@@ -506,10 +508,10 @@ test("Manage models opens the Models settings page", async ({ page }) => {
 
 test("a single managed provider uses a collapsible container", async ({ page }) => {
   const { state, dialog } = await fixture(page, false, { singleProvider: true })
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
   state.status = "complete"
-  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode" })).toBeVisible()
+  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode Console" })).toBeVisible()
   await expect(dialog.getByRole("button", { name: "Anomaly / OpenCode", exact: true })).toHaveCount(0)
   const provider = dialog.getByRole("button", { name: "OpenCode", exact: true })
   await expect(provider).toHaveAttribute("aria-expanded", "true")
@@ -524,7 +526,7 @@ test("a single managed provider uses a collapsible container", async ({ page }) 
 
 test("model choice is skipped after a provider has already been connected", async ({ page }) => {
   const { state, dialog } = await fixture(page, false, { existingProvider: true })
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
   state.status = "complete"
   await expect(dialog).toBeHidden()
@@ -549,14 +551,14 @@ test("model choice is skipped after a provider has already been connected", asyn
 
 test("Console reconnect clears disconnected provider suppression", async ({ page }) => {
   const { state, dialog } = await fixture(page)
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
   state.status = "complete"
-  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode" })).toBeVisible()
+  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode Console" })).toBeVisible()
   await dialog.getByRole("button", { name: "Close", exact: true }).click()
 
   const connected = page.locator('[data-component="connected-providers-section"]')
-  await expect(connected.getByText("OpenCode", { exact: true })).toBeVisible()
+  await expect(connected.getByText("OpenCode Console", { exact: true })).toBeVisible()
   await connected.getByRole("button", { name: "Disconnect", exact: true }).click()
   await expect(connected).toContainText("No connected providers")
   const popular = page.getByRole("heading", { name: "Popular providers", exact: true }).locator("..")
@@ -564,13 +566,13 @@ test("Console reconnect clears disconnected provider suppression", async ({ page
 
   await page.getByRole("button", { name: "Show more providers", exact: true }).click()
   await dialog.getByRole("button", { name: /^OpenCode / }).click()
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
   state.status = "complete"
-  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode" })).toBeVisible()
+  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode Console" })).toBeVisible()
   await page.keyboard.press("Escape")
   await expect(dialog).toBeHidden()
-  await expect(connected.getByText("OpenCode", { exact: true })).toBeVisible()
+  await expect(connected.getByText("OpenCode Console", { exact: true })).toBeVisible()
   await expect(connected.getByText("Anomaly", { exact: true })).toBeVisible()
 })
 
@@ -578,14 +580,14 @@ test("service-account API key form matches the Console dialog layout", async ({ 
   const { dialog } = await fixture(page)
   const initialShell = await dialog.boundingBox()
   await dialog.getByRole("button", { name: "Use API key", exact: true }).click()
-  await expect(dialog.getByRole("heading", { name: "Connect OpenCode", exact: true })).toBeVisible()
+  await expect(dialog.getByRole("heading", { name: "OpenCode Console", exact: true })).toBeVisible()
   const description = dialog.getByText("Connect using a service-account API key from OpenCode Console.")
   const label = dialog.locator('[data-component="provider-api-key-label"]')
   const input = dialog.getByLabel("OpenCode Console API key", { exact: true })
   const button = dialog.getByRole("button", { name: "Continue", exact: true })
   await expect(input).toBeFocused()
   const shell = await dialog.boundingBox()
-  const heading = await dialog.getByRole("heading", { name: "Connect OpenCode", exact: true }).boundingBox()
+  const heading = await dialog.getByRole("heading", { name: "OpenCode Console", exact: true }).boundingBox()
   const descriptionBox = await description.boundingBox()
   const labelBox = await label.boundingBox()
   const fieldBox = await input.locator("..").locator("..").boundingBox()
@@ -605,7 +607,7 @@ test("service-account API key form matches the Console dialog layout", async ({ 
 test("setup preserves the draft and Continue restores composer focus", async ({ page }) => {
   const { state, dialog } = await fixture(page, false, { draft: true })
   state.status = "complete"
-  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode" })).toBeVisible()
+  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode Console" })).toBeVisible()
   await dialog.getByRole("button", { name: "Continue", exact: true }).click()
   const composer = page.locator('[data-component="composer-editor"]')
   await expect(composer).toHaveText("Keep this draft throughout sign-in")
@@ -615,21 +617,21 @@ test("setup preserves the draft and Continue restores composer focus", async ({ 
 
 test("catalog refresh failure retries without asking for authorization again", async ({ page }) => {
   const { state, dialog } = await fixture(page)
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
   state.modelError = true
   state.status = "complete"
   await expect(dialog.getByRole("alert")).toContainText("Your account is connected, but we couldn't load your models")
   state.modelError = false
   await dialog.getByRole("button", { name: "Try again", exact: true }).click()
-  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode" })).toBeVisible()
+  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode Console" })).toBeVisible()
   expect(state.starts).toBe(1)
 })
 
 test("status request failure resumes the existing attempt", async ({ page }) => {
   const { state, dialog } = await fixture(page)
   state.statusError = true
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   const alert = dialog.getByRole("alert")
   await expect(alert).toBeVisible()
   await expect(alert).toHaveClass(/text-v2-text-text-base/)
@@ -637,7 +639,7 @@ test("status request failure resumes the existing attempt", async ({ page }) => 
   state.statusError = false
   state.status = "complete"
   await dialog.getByRole("button", { name: "Try again", exact: true }).click()
-  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode" })).toBeVisible()
+  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode Console" })).toBeVisible()
   expect(state.starts).toBe(1)
   expect(state.cancelled).toEqual([])
 })
@@ -645,7 +647,7 @@ test("status request failure resumes the existing attempt", async ({ page }) => 
 test("retrying authorization startup keeps the error view busy", async ({ page }) => {
   const { state, dialog } = await fixture(page)
   state.startError = true
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   const alert = dialog.getByRole("alert")
   await expect(alert).toContainText("Couldn't start sign-in")
   await expect(dialog.getByRole("heading", { name: "Connect to OpenCode", exact: true })).toBeVisible()
@@ -667,7 +669,7 @@ test("retrying authorization startup keeps the error view busy", async ({ page }
 
 test("backdrop clicks do not cancel Console authorization", async ({ page }) => {
   const { state, dialog } = await fixture(page)
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
   await page.locator('[data-component="dialog-overlay"]').click({ position: { x: 8, y: 8 } })
   await expect(dialog).toBeVisible()
@@ -678,7 +680,7 @@ test("backdrop clicks do not cancel Console authorization", async ({ page }) => 
 
 test("first connection waits for the managed Console catalog", async ({ page }) => {
   const { state, dialog } = await fixture(page, false, { stagedCatalog: true, directProvider: true })
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
   state.status = "complete"
   await expect(dialog.getByRole("status")).toContainText("Waiting for confirmation")
@@ -696,10 +698,10 @@ test("first connection waits for the managed Console catalog", async ({ page }) 
     ])
   }, directory)
 
-  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode" })).toBeVisible()
+  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode Console" })).toBeVisible()
   await expect(dialog.locator('[data-component="provider-model-group"]')).toHaveCount(2)
   await dialog.getByRole("button", { name: "Close", exact: true }).click()
-  await expect(connected.getByText("OpenCode", { exact: true })).toBeVisible()
+  await expect(connected.getByText("OpenCode Console", { exact: true })).toBeVisible()
   await expect(connected.getByText("Anomaly", { exact: true })).toBeVisible()
   const consoleRow = connected.locator(".settings-provider-console-header")
   const directRow = connected.locator(".settings-provider-row").filter({ hasText: "OpenRouter" })
@@ -710,7 +712,7 @@ test("first connection waits for the managed Console catalog", async ({ page }) 
 test("closing during authorization startup cancels the late server attempt", async ({ page }) => {
   const start = Promise.withResolvers<void>()
   const { state, dialog } = await fixture(page, false, { slowStart: start.promise })
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   await expect.poll(() => state.starts).toBe(1)
   await dialog.getByRole("button", { name: "Close", exact: true }).click()
   await expect(dialog).toBeHidden()
@@ -721,10 +723,10 @@ test("closing during authorization startup cancels the late server attempt", asy
 test("authorization startup stays on the Continue button until the device code is ready", async ({ page }) => {
   const start = Promise.withResolvers<void>()
   const { dialog } = await fixture(page, false, { slowStart: start.promise })
-  const button = dialog.getByRole("button", { name: "Continue to OpenCode Console" })
+  const button = dialog.getByRole("button", { name: "Continue in the browser" })
   await button.click()
   await expect(dialog.getByRole("button", { name: "Opening browser…" })).toHaveAttribute("aria-busy", "true")
-  await expect(dialog.getByRole("heading", { name: "Connect OpenCode", exact: true })).toBeVisible()
+  await expect(dialog.getByRole("heading", { name: "OpenCode Console", exact: true })).toBeVisible()
   await expect(dialog.getByRole("group", { name: /Device code/ })).toHaveCount(0)
   start.resolve()
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
@@ -733,7 +735,7 @@ test("authorization startup stays on the Continue button until the device code i
 test("browser failure offers a copyable sign-in link in a narrow RTL window", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   const { dialog } = await fixture(page, false, { browserFailed: true })
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   await expect(dialog.getByText(/We couldn't open your browser/)).toBeVisible()
   await page.setViewportSize({ width: 380, height: 650 })
   await page.evaluate(() => {
@@ -753,7 +755,7 @@ test("browser failure offers a copyable sign-in link in a narrow RTL window", as
 
 test("cancel releases the server attempt and retrying expiration creates a new attempt", async ({ page }) => {
   const { state, dialog } = await fixture(page)
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
   state.status = "expired"
   await expect(dialog.getByRole("alert")).toContainText("has expired")
@@ -768,13 +770,13 @@ test("cancel releases the server attempt and retrying expiration creates a new a
 test("an authorized workspace without models stays connected and can refresh", async ({ page }) => {
   const { state, dialog } = await fixture(page)
   state.models = false
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
   state.status = "complete"
   await expect(dialog.getByText(/this Console workspace has no available models/)).toBeVisible()
   state.models = true
   await dialog.getByRole("button", { name: "Refresh models" }).click()
-  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode" })).toBeVisible()
+  await expect(dialog.getByRole("heading", { name: "Connected to OpenCode Console" })).toBeVisible()
   expect(state.starts).toBe(1)
 })
 
@@ -786,7 +788,7 @@ test("remote disclosure precedes authorization and all auth requests target that
   const request = page.waitForRequest(
     (request) => request.method() === "POST" && request.url().includes("/connect/oauth"),
   )
-  await dialog.getByRole("button", { name: "Continue to OpenCode Console" }).click()
+  await dialog.getByRole("button", { name: "Continue in the browser" }).click()
   expect(new URL((await request).url()).origin).toBe("http://production.example:4096")
   await expect(dialog.getByRole("group", { name: "Device code: TFXS-STXG" })).toBeVisible()
   const cancelled = page.waitForRequest(

@@ -236,7 +236,9 @@ export const SettingsProviders: Component<{
                               <OpenCodeLogo class="settings-provider-icon size-4 shrink-0" />
                             </Show>
                             <div class="settings-provider-main">
-                              <span class="settings-provider-name truncate">{item.name}</span>
+                              <span class="settings-provider-name truncate">
+                                {item.id === "opencode" ? language.t("provider.connect.opencode.name") : item.name}
+                              </span>
                               <Badge>{type(item)}</Badge>
                             </div>
                           </div>
@@ -251,7 +253,12 @@ export const SettingsProviders: Component<{
                             <Button
                               size="normal"
                               variant="ghost-muted"
-                              onClick={() => void disconnect(item.id, item.name)}
+                              onClick={() =>
+                                void disconnect(
+                                  item.id,
+                                  item.id === "opencode" ? language.t("provider.connect.opencode.name") : item.name,
+                                )
+                              }
                             >
                               {language.t("common.disconnect")}
                             </Button>
@@ -351,7 +358,9 @@ export const SettingsProviders: Component<{
                     </Show>
                     <div class="settings-provider-copy">
                       <div class="settings-provider-main">
-                        <span class="settings-provider-name">{item.name}</span>
+                        <span class="settings-provider-name">
+                          {item.id === "opencode" ? language.t("provider.connect.opencode.name") : item.name}
+                        </span>
                         <Show when={item.id === "opencode" || item.id === "opencode-go"}>
                           <Badge>{language.t("dialog.provider.tag.recommended")}</Badge>
                         </Show>
