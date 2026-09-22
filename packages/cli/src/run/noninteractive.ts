@@ -564,7 +564,7 @@ export async function runNonInteractivePrompt(input: Input) {
             messageID: message.id,
             type: "reasoning",
             text,
-            metadata: item.state,
+            metadata: item.native,
             time: { start: message.time.created, end: timestamp },
           }
           renderedReasoning.set(key, item.text)
