@@ -12,6 +12,7 @@ import { Deferred, Effect, Fiber, Latch, Layer, Option, Schedule, Stream } from 
 import { testEffect } from "../../core/test/lib/effect"
 import { tmpdir } from "../../core/test/fixture/tmpdir"
 import type { OpenCodeEvent } from "../src/effect"
+import pkg from "../package.json"
 
 const it = testEffect(Layer.empty)
 type Sdk = typeof import("../src/effect")
@@ -89,6 +90,7 @@ for (const selection of ["explicit", "default"] as const) {
         const requests = yield* llm.requests()
         expect(requests).toHaveLength(1)
         expect(requests[0]?.model).toMatchObject({ provider: "custom", id: "fictional-chat" })
+        expect(requests[0]?.http?.headers?.["User-Agent"]).toBe(`opencode/latest/${pkg.version}/sdk`)
       }),
     ),
   )

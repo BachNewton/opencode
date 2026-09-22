@@ -3,6 +3,7 @@ export * as Generate from "./generate.js"
 import { LLM, LLMClient, AIError } from "@opencode/ai"
 import { Context, Effect, Layer, Schema } from "effect"
 import { makeLocationNode } from "@opencode/util/effect/app-node"
+import { App } from "./app.js"
 import { llmClient } from "./effect/app-node-platform.js"
 import { ModelResolver } from "./model-resolver.js"
 import { Model } from "./model.js"
@@ -34,6 +35,7 @@ export const layer = Layer.effect(
   Effect.gen(function* () {
     const llm = yield* LLMClient.Service
     const resolver = yield* ModelResolver.Service
+    const app = yield* App.Metadata
 
     const runText = Effect.fn("Generate.text")(function* (input: TextInput) {
       const resolved = yield* resolver.resolve(input.model).pipe(
@@ -60,15 +62,23 @@ export const layer = Layer.effect(
             ? `Model unavailable: ${input.model.providerID}/${input.model.id}`
             : "No model specified and no supported model is available",
         })
-      const response = yield* llm.generate(LLM.request({ model: resolved.model, prompt: input.prompt })).pipe(
-        Effect.mapError(
-          (error: AIError) =>
-            new UnavailableError({
-              message: error.message,
-              service: resolved.ref.providerID,
-            }),
-        ),
-      )
+      const response = yield* llm
+        .generate(
+          LLM.request({
+            model: resolved.model,
+            prompt: input.prompt,
+            http: { headers: { "User-Agent": App.useragent(app) } },
+          }),
+        )
+        .pipe(
+          Effect.mapError(
+            (error: AIError) =>
+              new UnavailableError({
+                message: error.message,
+                service: resolved.ref.providerID,
+              }),
+          ),
+        )
       return response.text
     })
 
@@ -90,5 +100,5 @@ export const layer = Layer.effect(
 export const node = makeLocationNode({
   service: Service,
   layer,
-  deps: [ModelResolver.node, llmClient],
+  deps: [ModelResolver.node, llmClient, App.node],
 })
