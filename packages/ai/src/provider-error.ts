@@ -59,7 +59,8 @@ export const isContextOverflowFailure = (failure: unknown) =>
     : Schema.is(ProviderErrorEvent)(failure) && failure.classification === "context-overflow"
 
 const decodeJson = Schema.decodeUnknownOption(Schema.fromJsonString(Schema.Unknown))
-// OpenCode Zen reports account caps as typed 429/402 errors that are not throttles.
+// OpenCode Zen reports account caps as typed 429/402 errors that are not throttles, and
+// OpenAI reports hard spend limits as 429s with a spend-limit code.
 const QUOTA_CODES = new Set([
   "insufficient_quota",
   "usage_not_included",
@@ -67,6 +68,8 @@ const QUOTA_CODES = new Set([
   "gousagelimiterror",
   "freeusagelimiterror",
   "creditlimitexceeded",
+  "organization_spend_limit_exceeded",
+  "project_spend_limit_exceeded",
 ])
 const AUTH_CODES = new Set(["authentication_error", "permission_error"])
 const SERVER_CODES = new Set([

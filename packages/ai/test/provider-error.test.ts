@@ -278,6 +278,19 @@ describe("provider error classification", () => {
     ).toEqual(Array(6).fill("QuotaExceeded"))
   })
 
+  test("classifies OpenAI hard spend limits as quota rather than throttling", () => {
+    expect(
+      ["organization_spend_limit_exceeded", "project_spend_limit_exceeded"].map(
+        (code) =>
+          classifyProviderFailure({
+            message: "Your project has reached its configured enforced spend limit.",
+            status: 429,
+            rawBody: JSON.stringify({ error: { code, message: "Spend limit reached." } }),
+          })._tag,
+      ),
+    ).toEqual(["QuotaExceeded", "QuotaExceeded"])
+  })
+
   test("does not let substituted server codes make a 4xx retryable", () => {
     const openai = { error: { type: "server_error", message: "Upstream request failed: Model is unavailable." } }
     const anthropic = {
