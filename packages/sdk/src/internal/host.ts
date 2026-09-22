@@ -37,6 +37,7 @@ export const create = Effect.fn("EmbeddedHost.create")(function* <R = never>(
       {
         ...server,
         app: {
+          ...server.app,
           name: server.app?.name ?? "sdk",
           version: server.app?.version ?? pkg.version,
           channel: server.app?.channel ?? "latest",
