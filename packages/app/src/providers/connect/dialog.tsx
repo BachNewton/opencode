@@ -1166,7 +1166,9 @@ function ProviderConnection(props: {
                 >
                   {language.t("provider.connect.title.anthropicProMax")}
                 </Match>
-                <Match when={desktopConsole}>{language.t("provider.connect.opencode.name")}</Match>
+                <Match when={desktopConsole}>
+                  {language.t("provider.connect.title", { provider: language.t("provider.connect.opencode.name") })}
+                </Match>
                 <Match when={true}>{language.t("provider.connect.title", { provider: provider().name })}</Match>
               </Switch>
             </DialogTitle>
