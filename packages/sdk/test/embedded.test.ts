@@ -74,23 +74,26 @@ for (const selection of ["explicit", "default"] as const) {
           Effect.timeout("2 seconds"),
         )
 
+        const model = fixture.sdk.Model.Ref.make({
+          providerID: fixture.sdk.Provider.ID.make("custom"),
+          id: fixture.sdk.Model.ID.make("fictional-chat"),
+        })
         const result = yield* opencode.generate.text({
           prompt: "Say ready",
-          ...(selection === "explicit"
-            ? {
-                model: fixture.sdk.Model.Ref.make({
-                  providerID: fixture.sdk.Provider.ID.make("custom"),
-                  id: fixture.sdk.Model.ID.make("fictional-chat"),
-                }),
-              }
-            : {}),
+          ...(selection === "explicit" ? { model } : {}),
         })
 
         expect(result.text).toBe("ready")
+        const session = yield* opencode.sessions.create({ location: location(fixture) })
+        yield* opencode.sessions.switchModel({ sessionID: session.id, model })
+        yield* opencode.sessions.prompt({ sessionID: session.id, text: "Say ready" })
+        yield* llm.wait(2)
+        yield* opencode.sessions.interrupt({ sessionID: session.id })
+
         const requests = yield* llm.requests()
-        expect(requests).toHaveLength(1)
+        expect(requests).toHaveLength(2)
         expect(requests[0]?.model).toMatchObject({ provider: "custom", id: "fictional-chat" })
-        expect(requests[0]?.http?.headers?.["User-Agent"]).toBe(`opencode/latest/${pkg.version}/sdk`)
+        expect(requests[1]?.http?.headers?.["User-Agent"]).toBe(`opencode/latest/${pkg.version}/sdk`)
       }),
     ),
   )
