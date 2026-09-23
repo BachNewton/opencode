@@ -339,10 +339,9 @@ export function Session(props: {
         variant: "error",
         duration: 5000,
       })
-      // Reconnects during a service restart can reach a server that is still starting or already
-      // stopping. Keep the session open for the next reconnect unless the server says it is gone.
-      if (!isSessionNotFoundError(error)) return
-      sessionTabs.enabled() ? sessionTabs.close(sessionID) : navigate({ type: "home" })
+      // Reconnects during a service restart can reach a server that is still starting or already stopping.
+      if (isSessionNotFoundError(error))
+        sessionTabs.enabled() ? sessionTabs.close(sessionID) : navigate({ type: "home" })
     })
   })
 
