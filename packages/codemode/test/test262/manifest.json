@@ -1,13 +1,21 @@
 {
   "revision": "250f204f23a9249ff204be2baec29600faae7b75",
-  "directories": ["built-ins/Array/prototype", "built-ins/Iterator", "built-ins/String/raw", "language/expressions/tagged-template", "language/statements"],
+  "directories": [
+    "built-ins/Array/prototype",
+    "built-ins/Function/prototype/apply",
+    "built-ins/Function/prototype/bind",
+    "built-ins/Function/prototype/call",
+    "built-ins/Iterator",
+    "built-ins/String/raw",
+    "language/arguments-object",
+    "language/expressions/tagged-template",
+    "language/expressions/this",
+    "language/statements"
+  ],
   "harness": ["assert.js", "sta.js", "compareArray.js", "doneprintHandle.js"],
   "flags": ["module", "raw", "noStrict"],
   "boundaries": {
     "class": "\\bclass\\s*[A-Za-z_${]",
-    "this": "\\bthis\\b",
-    "arguments": "\\barguments\\b",
-    "call/apply/bind": "\\.(call|apply|bind)\\s*\\(",
     "accessor properties": "\\b(get|set)\\s+[\\w$\\[][^\\n(]*\\(",
     "property descriptors": "Object\\.(defineProperty|defineProperties|getOwnPropertyDescriptors?|getOwnPropertyNames|create|getPrototypeOf|setPrototypeOf|freeze|seal|preventExtensions|isFrozen|isSealed|isExtensible)\\b",
     "boxed primitives": "\\bnew\\s+(String|Number|Boolean)\\s*\\(",
