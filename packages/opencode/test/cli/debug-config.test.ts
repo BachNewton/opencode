@@ -23,23 +23,19 @@ const config = {
 }
 
 describe("debug config redaction", () => {
-  cliIt.live("hides resolved credentials unless explicitly revealed", ({ opencode }) =>
+  cliIt.live("always masks resolved credentials", ({ opencode }) =>
     Effect.gen(function* () {
       const content = JSON.stringify({ provider: config.provider })
       const env = { OPENCODE_CONFIG_CONTENT: content }
-      const hidden = yield* opencode.spawn(["debug", "config"], { env })
-      opencode.expectExit(hidden, 0, "debug config")
-      expect(JSON.parse(hidden.stdout).provider.example.options).toMatchObject({
+      const result = yield* opencode.spawn(["debug", "config"], { env })
+      opencode.expectExit(result, 0, "debug config")
+      expect(JSON.parse(result.stdout).provider.example.options).toMatchObject({
         apiKey: "***",
         timeout: 1200,
         headers: { Authorization: "***", "X-API-Key": "***" },
       })
-      expect(hidden.stdout).not.toContain("sk-example")
-      expect(hidden.stdout).not.toContain("Bearer example")
-
-      const revealed = yield* opencode.spawn(["debug", "config", "--reveal-secrets"], { env })
-      opencode.expectExit(revealed, 0, "debug config --reveal-secrets")
-      expect(JSON.parse(revealed.stdout).provider.example.options).toMatchObject(config.provider.example.options)
+      expect(result.stdout).not.toContain("sk-example")
+      expect(result.stdout).not.toContain("Bearer example")
     }),
   )
 
