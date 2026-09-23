@@ -93,13 +93,33 @@ import {
   coerceToString,
   type Value,
 } from "./objects.js"
-import { preserveConsumerError } from "./callback.js"
+import { type Hint, preserveConsumerError, toPrimitive } from "./callback.js"
 import { Pending, resolvePromise, resolvePromiseValue } from "./promises.js"
-import { containsOpaqueReference, describeValue, rejectCircularInsertion, typeofValue } from "./references.js"
+import { containsOpaqueReference, describeValue, isOpaque, rejectCircularInsertion, typeofValue } from "./references.js"
 import { ScopeStack } from "./scope.js"
 import { constructRegExp } from "../stdlib/regexp.js"
 import { enumerableSource } from "../stdlib/object.js"
 import { compoundOperators } from "../stdlib/value.js"
+
+/** The binary operators that convert object operands through ToPrimitive before acting on primitives. */
+const primitiveOperators = new Set([
+  "+",
+  "-",
+  "*",
+  "/",
+  "%",
+  "**",
+  "<",
+  "<=",
+  ">",
+  ">=",
+  "&",
+  "|",
+  "^",
+  "<<",
+  ">>",
+  ">>>",
+])
 
 // What a loop does with its body's result: exit with a StatementResult, or undefined to keep iterating.
 // Unlabelled break ends this loop; a label the loop does not carry propagates outward.
@@ -1351,7 +1371,29 @@ class Frame<R> {
       const lhs = yield* self.evaluateExpression(left)
       const rhs = yield* self.evaluateExpression(node.right)
       if (operator === "instanceof") return instanceofValue(lhs, rhs, node)
+      if (lhs instanceof Obj || rhs instanceof Obj) return yield* self.applyOperator(operator, lhs, rhs, node)
       return self.applyBinaryOperator(operator, lhs, rhs, node)
+    })
+  }
+
+  /** ToPrimitive for an operand: data objects run their own methods; opaque values stay for the data gates below. */
+  private toPrimitive(value: Value, hint: Hint, node: AstNode) {
+    if (!(value instanceof Obj) || isOpaque(value)) return Effect.succeed(value)
+    return this.native(() => toPrimitive(this.ctx, value, hint), node)
+  }
+
+  // Arithmetic, relational, and bitwise operators convert both operands first, left then right, so a `valueOf`
+  // runs (and throws) in spec order; `+` asks for the default hint and the rest for a number.
+  private applyOperator(operator: string, lhs: Value, rhs: Value, node: AstNode): Effect.Effect<Value, unknown, R> {
+    if (!(lhs instanceof Obj || rhs instanceof Obj) || !primitiveOperators.has(operator)) {
+      return Effect.succeed(this.applyBinaryOperator(operator, lhs, rhs, node))
+    }
+    const hint = operator === "+" ? "default" : "number"
+    const self = this
+    return Effect.gen(function* () {
+      const l = yield* self.toPrimitive(lhs, hint, node)
+      const r = yield* self.toPrimitive(rhs, hint, node)
+      return self.applyBinaryOperator(operator, l, r, node)
     })
   }
 
@@ -1439,14 +1481,16 @@ class Frame<R> {
     if (operator === "typeof" && argument.type === "Identifier" && !this.scopes.resolve(argument.name)) {
       return Effect.succeed("undefined")
     }
-    return Effect.map(this.evaluateExpression(argument), (value) => {
+    const self = this
+    return Effect.gen(function* () {
+      const value = yield* self.evaluateExpression(argument)
       if (operator === "typeof") return typeofValue(value)
       if (operator === "!") return !value
       if (operator === "void") return undefined
-      if (containsOpaqueReference(value)) {
+      const operand = yield* self.toPrimitive(value, "number", node)
+      if (containsOpaqueReference(operand)) {
         throw invalidData("Unary operators require data values.", node)
       }
-      const operand = value instanceof Obj ? value.toPrimitive("number") : value
       let result: Value
       switch (operator) {
         case "+":
@@ -1468,10 +1512,15 @@ class Frame<R> {
   private evaluateAssignmentExpression(node: AssignmentExpression): Effect.Effect<Value, unknown, R> {
     const left = node.left
     const operator = node.operator
+    // The binary operator a compound assignment applies: `+=` is `+`.
+    const binary = operator.slice(0, -1)
     const self = this
     return Effect.gen(function* () {
       if (operator === "??=" || operator === "||=" || operator === "&&=") {
         return yield* self.evaluateLogicalAssignment(node, left, operator)
+      }
+      if (operator !== "=" && !compoundOperators.has(operator)) {
+        throw typeError(`Unsupported assignment operator '${operator}'.`, node)
       }
       if (operator === "=" && (left.type === "ObjectPattern" || left.type === "ArrayPattern")) {
         const rightValue = yield* self.evaluateExpression(node.right)
@@ -1483,17 +1532,24 @@ class Frame<R> {
         if (operator !== "=") {
           const current = self.scopes.get(name, left)
           const rightValue = yield* self.evaluateExpression(node.right)
-          return self.scopes.set(name, self.applyCompoundAssignment(operator, current, rightValue, node), left)
+          const next =
+            current instanceof Obj || rightValue instanceof Obj
+              ? yield* self.applyOperator(binary, current, rightValue, node)
+              : self.applyBinaryOperator(binary, current, rightValue, node)
+          return self.scopes.set(name, next, left)
         }
         const rightValue = yield* self.evaluateNamed(node.right, name)
         return self.scopes.set(name, rightValue, left)
       }
       if (left.type === "MemberExpression") {
         return yield* self.modifyMember(left, (current) =>
-          Effect.map(self.evaluateExpression(node.right), (rightValue) => {
-            if (operator === "=") return { write: true, next: rightValue, result: rightValue }
-            const next = self.applyCompoundAssignment(operator, current, rightValue, node)
-            return { write: true, next, result: next }
+          Effect.flatMap(self.evaluateExpression(node.right), (rightValue) => {
+            if (operator === "=") return Effect.succeed({ write: true, next: rightValue, result: rightValue })
+            return Effect.map(self.applyOperator(binary, current, rightValue, node), (next) => ({
+              write: true,
+              next,
+              result: next,
+            }))
           }),
         )
       }
@@ -1553,21 +1609,26 @@ class Frame<R> {
     }
 
     if (argument.type === "Identifier") {
-      return Effect.sync(() => {
-        const name = argument.name
-        const current = operand(this.scopes.get(name, argument))
-        const next = current + increment
+      const name = argument.name
+      const current = this.scopes.get(name, argument)
+      const update = (value: Value) => {
+        const before = operand(value)
+        const next = before + increment
         this.scopes.set(name, next, argument)
-        return prefix ? next : current
-      })
+        return prefix ? next : before
+      }
+      if (!(current instanceof Obj)) return Effect.sync(() => update(current))
+      return Effect.map(this.toPrimitive(current, "number", argument), update)
     }
 
     if (argument.type === "MemberExpression") {
-      return this.modifyMember(argument, (current) => {
-        const value = operand(current)
-        const next = value + increment
-        return Effect.succeed({ write: true, next, result: prefix ? next : value })
-      })
+      return this.modifyMember(argument, (current) =>
+        Effect.map(this.toPrimitive(current, "number", argument), (primitive) => {
+          const value = operand(primitive)
+          const next = value + increment
+          return { write: true, next, result: prefix ? next : value }
+        }),
+      )
     }
 
     throw typeError("Update target must be an Identifier or MemberExpression.", argument)
@@ -2026,7 +2087,7 @@ class Frame<R> {
 
         if (index < expressions.length) {
           const raw = yield* self.evaluateExpression(expressions[index])
-          output += coerceToString(raw)
+          output += coerceToString(yield* self.toPrimitive(raw, "string", expressions[index]))
           checkStringLength(output.length)
         }
       }
@@ -2074,13 +2135,6 @@ class Frame<R> {
     return Effect.flatMap(this.evaluateExpression(node.test), (test) =>
       this.evaluateExpression(test ? node.consequent : node.alternate),
     )
-  }
-
-  private applyCompoundAssignment(operator: string, current: Value, incoming: Value, node: AstNode): Value {
-    if (!compoundOperators.has(operator)) {
-      throw typeError(`Unsupported assignment operator '${operator}'.`, node)
-    }
-    return this.applyBinaryOperator(operator.slice(0, -1), current, incoming, node)
   }
 
   private getMemberReference(
