@@ -2461,7 +2461,7 @@ function AssistantRetry(props: { retry: SessionMessageAssistant["retry"] }) {
 
 // Pending messages moved to individual tool pending functions
 
-function ToolPart(props: { part: SessionMessageAssistantTool; images?: boolean }) {
+export function ToolPart(props: { part: SessionMessageAssistantTool; images?: boolean }) {
   const display = createMemo(() => toolDisplay(props.part.name))
 
   const toolprops = {
@@ -2701,6 +2701,7 @@ function InlineTool(props: {
   children: JSX.Element
   part: SessionMessageAssistantTool
   onClick?: () => void
+  onClickWhenFailed?: boolean
 }) {
   const theme = useTheme()
   const renderer = useRenderer()
@@ -2749,7 +2750,7 @@ function InlineTool(props: {
       onMouseOut={() => setHover(false)}
       onMouseUp={() => {
         if (renderer.getSelection()?.getSelectedText()) return
-        if (failed()) {
+        if (failed() && !props.onClickWhenFailed) {
           setErrorExpanded((value) => !value)
           return
         }
@@ -3303,6 +3304,7 @@ function Execute(props: ToolProps) {
         pending="execute"
         complete={true}
         part={props.part}
+        onClickWhenFailed
         onClick={() => dialog.replace(() => <DialogExecute part={props.part} />)}
       >
         execute
