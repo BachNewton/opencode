@@ -1,9 +1,8 @@
 export * as WebSearchResponse from "./response.js"
 
 import { parseJSON } from "@opencode/ai/protocols/utils/partial-json"
-import { Effect, Option, Schema, Stream } from "effect"
-import { HttpClient, HttpClientError } from "effect/unstable/http"
-import type { HttpClientRequest, HttpClientResponse } from "effect/unstable/http"
+import { Duration, Effect, Option, Schema, Stream } from "effect"
+import { HttpClient, HttpClientError, type HttpClientRequest, type HttpClientResponse } from "effect/unstable/http"
 
 export const MAX_BYTES = 1024 * 1024
 
@@ -12,22 +11,27 @@ export const execute = (http: HttpClient.HttpClient, request: HttpClientRequest.
   Effect.gen(function* () {
     const response = yield* HttpClient.withScope(http).execute(request)
     if (response.status >= 200 && response.status < 300) return yield* read(response)
-    const description = yield* read(response).pipe(
-      Effect.map((body) =>
-        payloads(body.text)
-          .flatMap((payload) => Option.toArray(json(payload, body.truncated)))
-          .map(failure)
-          .find((message) => message !== undefined),
-      ),
-      Effect.orElseSucceed(() => undefined),
-    )
     return yield* new HttpClientError.HttpClientError({
-      reason: new HttpClientError.StatusCodeError({ request, response, description }),
+      reason: new HttpClientError.StatusCodeError({
+        request,
+        response,
+        description: yield* read(response).pipe(
+          Effect.map((body) =>
+            payloads(body.text)
+              .flatMap((payload) => Option.toArray(json(payload, body.truncated)))
+              .map(failure)
+              .find((message) => message !== undefined),
+          ),
+          // The explanation is optional; a slow or broken body must not delay the failure.
+          Effect.timeoutOrElse({ duration: Duration.seconds(1), orElse: () => Effect.undefined }),
+          Effect.orElseSucceed(() => undefined),
+        ),
+      }),
     })
   })
 
 // Stops reading at MAX_BYTES instead of failing; parsers keep the results that arrived complete.
-export const read = (response: HttpClientResponse.HttpClientResponse) =>
+const read = (response: HttpClientResponse.HttpClientResponse) =>
   Effect.gen(function* () {
     let size = 0
     const chunks = yield* response.stream.pipe(
@@ -58,16 +62,18 @@ const decodeFailure = Schema.decodeUnknownOption(
       }),
     }),
     Schema.Struct({ detail: Schema.Struct({ error: Schema.String }) }),
+    Schema.Struct({ _tag: Schema.String, message: Schema.String }),
   ]),
 )
 
-// JSON-RPC errors, MCP tool errors, and Tavily's error detail.
+// JSON-RPC errors, MCP tool errors, Tavily's error detail, and OpenCode API errors.
 export const failure = (value: unknown) =>
   Option.getOrUndefined(
     Option.map(decodeFailure(value), (decoded) => {
       if ("error" in decoded) return decoded.error.message
       if ("result" in decoded) return decoded.result.content.map((item) => item.text).join("\n")
-      return decoded.detail.error
+      if ("detail" in decoded) return decoded.detail.error
+      return decoded.message
     }),
   )
 

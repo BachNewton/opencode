@@ -30,7 +30,8 @@ beforeEach(() => {
 })
 
 const it = webSearchIntegrationTest
-const sseMessage = (message: object) => `event: message\ndata: ${JSON.stringify({ jsonrpc: "2.0", id: 1, ...message })}\n\n`
+const sseMessage = (message: object) =>
+  `event: message\ndata: ${JSON.stringify({ jsonrpc: "2.0", id: 1, ...message })}\n\n`
 
 describe("built-in web search providers", () => {
   ;[
@@ -97,8 +98,7 @@ describe("built-in web search providers", () => {
 
   describe("responses larger than the size cap", () => {
     const huge = "x".repeat(2 * WebSearchResponse.MAX_BYTES)
-    const sse = (result: object) => sseMessage({ result })
-    const text = (value: string) => ({ content: [{ type: "text", text: value }] })
+    const mcpText = (text: string) => sseMessage({ result: { content: [{ type: "text", text }] } })
     const exaBlock = (url: string, title: string, content: string) =>
       `Title: ${title}\nURL: ${url}\nPublished: N/A\nAuthor: N/A\nHighlights:\n${content}`
     const parallelSearch = {
@@ -113,43 +113,46 @@ describe("built-in web search providers", () => {
     ;[
       {
         plugin: WebSearchExa.Plugin,
-        body: sse(
-          text(
-            [
-              exaBlock("https://effect.website", "Effect", "Effect documentation"),
-              exaBlock("https://huge.example.com", "Huge", huge),
-              exaBlock("https://after.example.com", "After", "after"),
-            ].join("\n\n---\n\n"),
-          ),
+        providerID: WebSearch.ID.make("exa"),
+        body: mcpText(
+          [
+            exaBlock("https://effect.website", "Effect", "Effect documentation"),
+            exaBlock("https://huge.example.com", "Huge", huge),
+            exaBlock("https://after.example.com", "After", "after"),
+          ].join("\n\n---\n\n"),
         ),
       },
       {
         plugin: WebSearchFirecrawl.Plugin,
-        body: sse(
-          text(
-            JSON.stringify({
-              success: true,
-              data: {
-                web: [
-                  { url: "https://effect.website", title: "Effect", description: "Effect documentation" },
-                  { url: "https://huge.example.com", title: "Huge", description: huge },
-                  { url: "https://after.example.com", title: "After", description: "after" },
-                ],
-              },
-            }),
-          ),
+        providerID: WebSearch.ID.make("firecrawl"),
+        body: mcpText(
+          JSON.stringify({
+            success: true,
+            data: {
+              web: [
+                { url: "https://effect.website", title: "Effect", description: "Effect documentation" },
+                { url: "https://huge.example.com", title: "Huge", description: huge },
+                { url: "https://after.example.com", title: "After", description: "after" },
+              ],
+            },
+          }),
         ),
       },
       {
         plugin: WebSearchParallel.Plugin,
+        providerID: WebSearch.ID.make("parallel"),
         body: JSON.stringify({
           jsonrpc: "2.0",
           id: 1,
-          result: { ...text(JSON.stringify(parallelSearch)), structuredContent: parallelSearch },
+          result: {
+            content: [{ type: "text", text: JSON.stringify(parallelSearch) }],
+            structuredContent: parallelSearch,
+          },
         }),
       },
       {
         plugin: WebSearchTavily.Plugin,
+        providerID: WebSearch.ID.make("tavily"),
         body: JSON.stringify({
           results: [
             { title: "Effect", url: "https://effect.website", content: "Effect documentation" },
@@ -160,16 +163,15 @@ describe("built-in web search providers", () => {
       },
       {
         plugin: WebSearchTinyFish.Plugin,
-        body: sse(
-          text(
-            JSON.stringify({
-              results: [
-                { title: "Effect", url: "https://effect.website", snippet: "Effect documentation" },
-                { title: "Huge", url: "https://huge.example.com", snippet: huge },
-                { title: "After", url: "https://after.example.com", snippet: "after" },
-              ],
-            }),
-          ),
+        providerID: WebSearch.ID.make("tinyfish"),
+        body: mcpText(
+          JSON.stringify({
+            results: [
+              { title: "Effect", url: "https://effect.website", snippet: "Effect documentation" },
+              { title: "Huge", url: "https://huge.example.com", snippet: huge },
+              { title: "After", url: "https://after.example.com", snippet: "after" },
+            ],
+          }),
         ),
       },
     ].forEach((provider) => {
@@ -181,11 +183,10 @@ describe("built-in web search providers", () => {
           yield* provider.plugin.effect(
             host({ integration: integrationHost(integrations), websearch: webSearchHost(websearch) }),
           )
-          const providerID = (yield* websearch.providers())[0]!.id
 
-          expect(yield* websearch.query({ query: "effect", providerID })).toEqual(
+          expect(yield* websearch.query({ query: "effect", providerID: provider.providerID })).toEqual(
             new WebSearch.Response({
-              providerID,
+              providerID: provider.providerID,
               results: [{ url: "https://effect.website", title: "Effect", content: "Effect documentation", time: {} }],
             }),
           )
@@ -225,10 +226,7 @@ describe("built-in web search providers", () => {
       const quota =
         "Free daily Search quota used (50/50). Sign up for continued access: https://agent.tinyfish.ai/sign-up"
 
-      resetWebSearchFixture(
-        JSON.stringify({ jsonrpc: "2.0", error: { code: -31001, message: quota }, id: 1 }),
-        401,
-      )
+      resetWebSearchFixture(JSON.stringify({ jsonrpc: "2.0", error: { code: -31001, message: quota }, id: 1 }), 401)
       const tinyfish = yield* websearch
         .query({ query: "effect", providerID: WebSearch.ID.make("tinyfish") })
         .pipe(Effect.flip)

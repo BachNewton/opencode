@@ -75,7 +75,9 @@ export class RequestError extends Schema.TaggedError<RequestError>()("WebSearch.
     if (status === 429) return "Rate limited (HTTP 429)"
     if (status === 401) return "Authentication failed (HTTP 401)"
     if (status !== undefined) return `Request failed (HTTP ${status})`
-    return cause.cause instanceof Error && cause.cause.message ? `Request failed: ${cause.cause.message}` : "Request failed"
+    return cause.cause instanceof Error && cause.cause.message
+      ? `Request failed: ${cause.cause.message}`
+      : "Request failed"
   }
 }
 

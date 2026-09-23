@@ -162,7 +162,7 @@ export const Plugin = {
                 const message = `Unable to search the web for ${input.query}`
                 // A cause becomes the model-visible error, so web search failures are described here instead;
                 // other causes, such as permission errors, keep their own session error.
-                if (Schema.is(WebSearch.RequestError)(error))
+                if (error instanceof WebSearch.RequestError)
                   return new ToolFailure({
                     message: `${message} (${error.providerID}): ${error.message}`,
                     metadata: { provider: error.providerID },

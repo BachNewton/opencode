@@ -71,7 +71,9 @@ export const Plugin = define<HttpClient.HttpClient | Scope.Scope>({
             const search = Option.getOrUndefined(
               decodeSearchResponse(
                 response.result?.structuredContent ??
-                  (content ? Option.getOrUndefined(WebSearchResponse.json(content.text, response.truncated)) : undefined),
+                  (content
+                    ? Option.getOrUndefined(WebSearchResponse.json(content.text, response.truncated))
+                    : undefined),
               ),
             )
             return WebSearchResponse.items(SearchResult, search?.results ?? [], response.truncated).map((item) => {
