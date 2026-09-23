@@ -16,6 +16,8 @@ type Setting = {
   max?: number
   format?: (value: unknown) => string
   keywords?: readonly string[]
+  /** Hides the setting unless it applies, such as while its experiment is enabled. */
+  when?: (config: ReturnType<typeof useConfig>["data"]) => boolean
 }
 
 export const settings: Setting[] = [
@@ -83,6 +85,15 @@ export const settings: Setting[] = [
     default: "auto",
     values: ["none", "auto"],
     keywords: ["transcript", "messages", "reads", "searches"],
+  },
+  {
+    title: "Transcript verbosity",
+    category: "Session",
+    path: ["session", "verbosity"],
+    default: "medium",
+    values: ["low", "medium", "high"],
+    keywords: ["detail", "activity", "summary", "transcript"],
+    when: (config) => config.experimental?.session_verbosity === true,
   },
   {
     title: "Transcript images",
@@ -309,6 +320,10 @@ export const settings: Setting[] = [
   },
 ]
 
+export function settingVisible(setting: Setting, config: ReturnType<typeof useConfig>["data"]) {
+  return setting.when?.(config) ?? true
+}
+
 export function settingID(setting: Setting) {
   return setting.path.join(".")
 }
@@ -343,13 +358,19 @@ export function DialogConfig(props: { current?: string }) {
     return index === undefined || index < 0 ? String(current) : (setting.labels?.[index] ?? String(current))
   }
   const options = createMemo(() =>
-    settings.map((setting, index) => ({
-      title: setting.title,
-      category: setting.category,
-      searchText: setting.keywords?.join(" "),
-      footer: display(setting),
-      value: index,
-    })),
+    settings.flatMap((setting, index) =>
+      settingVisible(setting, config.data)
+        ? [
+            {
+              title: setting.title,
+              category: setting.category,
+              searchText: setting.keywords?.join(" "),
+              footer: display(setting),
+              value: index,
+            },
+          ]
+        : [],
+    ),
   )
 
   async function change(direction: number, index = selected()) {
