@@ -124,7 +124,7 @@ export interface Interface extends State.Transformable<Editor> {
   readonly readResource: (input: {
     readonly server: ServerName | string
     readonly uri: string
-  }) => Effect.Effect<ResourceContent | undefined, NotFoundError>
+  }) => Effect.Effect<ResourceContent | undefined, Error>
 }
 
 export class Service extends Context.Service<Service, Interface>()("@opencode/MCP") {}
@@ -721,7 +721,11 @@ export const layer = (options?: Options) =>
           if (!target.entry.client) return ResourceCatalog.make({ resources: [], templates: [] })
           const catalog = yield* recovering(target.name, target.entry, target.entry.client, (connection) =>
             Effect.all(
-              { resources: connection.resources(), templates: connection.resourceTemplates() },
+              {
+                resources: connection.resources(),
+                // Some servers declare resources without implementing template listing.
+                templates: connection.resourceTemplates().pipe(Effect.orElseSucceed(() => [])),
+              },
               { concurrency: "unbounded" },
             ),
           )
@@ -752,7 +756,7 @@ export const layer = (options?: Options) =>
           if (!target.entry.client) return undefined
           const result = yield* recovering(target.name, target.entry, target.entry.client, (connection) =>
             connection.readResource({ uri: input.uri }),
-          ).pipe(Effect.orElseSucceed(() => undefined))
+          )
           if (!result) return undefined
           return ResourceContent.make({
             server: target.name,

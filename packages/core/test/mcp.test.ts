@@ -108,6 +108,8 @@ function resourceServer(
         ] as Array<{ uri: string; text: string; mimeType?: string } | { uri: string; blob: string; mimeType?: string }>,
         resourceLists: 0,
         resourceReads: [] as string[],
+        templatesUnsupported: false,
+        missing: [] as string[],
         templateLists: 0,
         toolLists: 0,
         toolCalls: [] as Array<{
@@ -204,11 +206,13 @@ function resourceServer(
           })
           protocol.setRequestHandler("resources/templates/list", (request) => {
             state.templateLists += 1
+            if (state.templatesUnsupported) return Promise.reject(new Error("Method not found"))
             const page = state.templatePages?.[request.params?.cursor ?? "initial"]
             return Promise.resolve({ resourceTemplates: page?.items ?? state.templates, nextCursor: page?.nextCursor })
           })
           protocol.setRequestHandler("resources/read", (request) => {
             state.resourceReads.push(request.params.uri)
+            if (state.missing.includes(request.params.uri)) return Promise.reject(new Error("Resource not found"))
             return Promise.resolve({ contents: state.contents })
           })
         }
@@ -1447,6 +1451,31 @@ it.live("discovers and reads MCP resources through Code Mode", () =>
       })
       expect(server.state.resourceReads).toEqual([])
 
+      // Omitting the server lists every server, so the model can find which one owns a URI.
+      const everywhere = yield* run("return await tools.opencode.list_mcp_resources({})")
+      expect(JSON.parse(everywhere.output.output)).toEqual({
+        resources: [
+          { server: "resources", name: "Guide", uri: "docs://guide" },
+          { server: "resources", name: "Readme", uri: "docs://readme" },
+        ],
+        templates: [
+          { server: "resources", name: "File", uriTemplate: "docs://{path}" },
+          { server: "resources", name: "Issue", uriTemplate: "issue://{id}" },
+        ],
+      })
+
+      // A server may declare resources without implementing template listing.
+      server.state.templatesUnsupported = true
+      const untemplated = yield* run('return await tools.opencode.list_mcp_resources({ server: "resources" })')
+      expect(JSON.parse(untemplated.output.output)).toEqual({
+        resources: [
+          { server: "resources", name: "Readme", uri: "docs://readme" },
+          { server: "resources", name: "Guide", uri: "docs://guide" },
+        ],
+        templates: [],
+      })
+      server.state.templatesUnsupported = false
+
       assertion = yield* Deferred.make<Permission.AssertInput>()
       const read = yield* run(
         'const resource = await tools.opencode.read_mcp_resource({ server: "resources", uri: "docs://readme" }); return resource.contents.filter(part => part.type === "text").map(part => part.text).join("\\n")',
@@ -1487,12 +1516,20 @@ it.live("discovers and reads MCP resources through Code Mode", () =>
       if (typeof outputPath !== "string") throw new Error("Missing full resource output")
       expect(yield* Effect.promise(() => Bun.file(outputPath).text())).toBe("line\n".repeat(20_000))
 
+      // An empty contents array means the resource exists without content, not that it is missing.
       server.state.contents = []
       const empty = yield* run(
         'return await tools.opencode.read_mcp_resource({ server: "resources", uri: "docs://empty" })',
       )
-      expect(empty.metadata?.error).toBe(true)
-      expect(empty.output.output).toContain("Unable to read MCP resource: resources:docs://empty")
+      expect(empty.metadata?.error).toBeUndefined()
+      expect(JSON.parse(empty.output.output)).toEqual({ server: "resources", uri: "docs://empty", contents: [] })
+      server.state.missing = ["docs://gone"]
+      const gone = yield* run(
+        'return await tools.opencode.read_mcp_resource({ server: "resources", uri: "docs://gone" })',
+      )
+      expect(gone.metadata?.error).toBe(true)
+      expect(gone.output.output).toContain("Unable to read MCP resource resources:docs://gone")
+      expect(gone.output.output).toContain("Resource not found")
       const missing = yield* run(
         'return await tools.opencode.read_mcp_resource({ server: "missing", uri: "docs://readme" })',
       )

@@ -33,8 +33,6 @@ export type AutocompleteRef = {
   completeQueueableCommand: () => boolean
 }
 
-type AutocompleteOptionKind = "skill" | "agent" | "reference"
-
 export type AutocompleteOption = {
   display: string
   value?: string
@@ -46,7 +44,7 @@ export type AutocompleteOption = {
   path?: string
   absolute?: string
   destructive?: { id: string; confirm: string; run: () => void }
-  kind?: AutocompleteOptionKind
+  kind?: "skill" | "agent" | "reference"
   queueable?: boolean
 }
 
@@ -844,7 +842,7 @@ export function Autocomplete(props: {
     return "No matching files, agents, or references"
   })
   const emptyError = createMemo(() => store.visible === "reference" && !files.loading && visibleFiles().failed)
-  const labels: Record<AutocompleteOptionKind, string> = {
+  const labels = {
     skill: "skill",
     agent: "agent",
     reference: "reference",

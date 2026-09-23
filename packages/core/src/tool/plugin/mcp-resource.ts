@@ -18,9 +18,11 @@ export const Plugin = {
           name: "list_mcp_resources",
           options: { namespace: "opencode", codemode: true },
           description:
-            "List documents, records, and other data exposed by one MCP server. Use this when the user refers to something that is not a local file, then load a match with read_mcp_resource. Templates are resources addressed by a parameter such as a record ID; fill in the uriTemplate placeholders before reading.",
+            "List documents, records, and other data exposed by MCP servers. Use this when the user refers to something that is not a local file, such as a URI with a custom scheme, then load a match with read_mcp_resource. Each entry names the server to read it from. Templates are resources addressed by a parameter such as a record ID; fill in the uriTemplate placeholders before reading.",
           input: Schema.Struct({
-            server: Schema.String.annotate({ description: "MCP server name as configured." }),
+            server: Schema.optionalKey(
+              Schema.String.annotate({ description: "MCP server name as configured. Omit to list every server." }),
+            ),
           }),
           output: Schema.Struct({
             resources: Schema.Array(Mcp.Resource),
@@ -30,14 +32,15 @@ export const Plugin = {
             Effect.gen(function* () {
               yield* permission.assert({
                 action: "opencode_list_mcp_resources",
-                resources: [input.server],
-                save: [input.server],
+                resources: [input.server ?? "*"],
+                save: [input.server ?? "*"],
                 metadata: {},
                 sessionID: context.sessionID,
                 agent: context.agent,
                 source: { type: "tool", messageID: context.messageID, id: context.id },
               })
-              return { output: yield* mcp.resources(input) }
+              if (input.server === undefined) return { output: yield* mcp.resourceCatalog() }
+              return { output: yield* mcp.resources({ server: input.server }) }
             }).pipe(Effect.mapError((error) => new ToolFailure({ message: error.message, error }))),
         })
         editor.add({
@@ -66,8 +69,10 @@ export const Plugin = {
                 source: { type: "tool", messageID: context.messageID, id: context.id },
               })
               const resource = yield* mcp.readResource(input)
-              if (!resource?.contents.length)
-                return yield* new ToolFailure({ message: `Unable to read MCP resource: ${input.server}:${input.uri}` })
+              if (!resource)
+                return yield* new ToolFailure({
+                  message: `MCP server "${input.server}" is not connected or does not expose resources`,
+                })
               return {
                 output: resource,
                 content: resource.contents.flatMap((part) =>
@@ -78,7 +83,12 @@ export const Plugin = {
               }
             }).pipe(
               Effect.mapError((error) =>
-                error instanceof ToolFailure ? error : new ToolFailure({ message: error.message, error }),
+                error instanceof ToolFailure
+                  ? error
+                  : new ToolFailure({
+                      message: `Unable to read MCP resource ${input.server}:${input.uri}: ${error.message}`,
+                      error,
+                    }),
               ),
             ),
         })
