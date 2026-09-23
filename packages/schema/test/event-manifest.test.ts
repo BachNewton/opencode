@@ -198,7 +198,7 @@ describe("public event manifest", () => {
       id: "call_test",
       input: {},
       executed: true,
-      state: { itemId: "item_test" },
+      native: { itemId: "item_test" },
     })
 
     expect(text).not.toHaveProperty("textID")

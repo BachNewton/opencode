@@ -755,7 +755,7 @@ Recent work
               id: "hosted",
               name: "web_search",
               executed: true,
-              providerState: { continuation: "hosted-call" },
+              native: { continuation: "hosted-call" },
               providerResultState: { continuation: "hosted-result" },
               state: SessionMessage.ToolStateCompleted.make({
                 status: "completed",
@@ -769,7 +769,7 @@ Recent work
               id: "hosted-failed",
               name: "write",
               executed: true,
-              providerState: { continuation: "failed" },
+              native: { continuation: "failed" },
               state: SessionMessage.ToolStateError.make({
                 status: "error",
                 input: { path: "README.md" },
@@ -925,7 +925,7 @@ Recent work
               id: "hosted-completed",
               name: "web_search",
               executed: true,
-              providerState: { itemId: "call_completed" },
+              native: { itemId: "call_completed" },
               providerResultState: { itemId: "result_completed" },
               state: SessionMessage.ToolStateCompleted.make({
                 status: "completed",
@@ -939,7 +939,7 @@ Recent work
               id: "hosted-failed",
               name: "web_search",
               executed: true,
-              providerState: { itemId: "call_failed" },
+              native: { itemId: "call_failed" },
               providerResultState: { itemId: "result_failed" },
               state: SessionMessage.ToolStateError.make({
                 status: "error",
@@ -1023,7 +1023,7 @@ Recent work
               id: "hosted-old-model",
               name: "web_search",
               executed: true,
-              providerState: { itemId: "hosted-old-model" },
+              native: { itemId: "hosted-old-model" },
               providerResultState: { itemId: "hosted-old-model" },
               state: SessionMessage.ToolStateCompleted.make({
                 status: "completed",
@@ -1037,7 +1037,7 @@ Recent work
               id: "local-old-model",
               name: "read",
               executed: false,
-              providerState: { call: "old" },
+              native: { call: "old" },
               providerResultState: { result: "old" },
               state: SessionMessage.ToolStateCompleted.make({
                 status: "completed",

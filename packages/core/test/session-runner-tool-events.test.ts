@@ -508,7 +508,7 @@ test("provider-executed tool metadata is flattened using the route key", async (
   )
 
   expect(published.find((event) => event.type === "session.tool.called.1")?.data).toMatchObject({
-    state: { itemId: "call" },
+    native: { itemId: "call" },
   })
   expect(published.find((event) => event.type === "session.tool.success.2")?.data).toMatchObject({
     resultState: { itemId: "result" },

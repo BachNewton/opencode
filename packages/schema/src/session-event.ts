@@ -504,7 +504,7 @@ export namespace Tool {
       ...ToolBase,
       input: Schema.Record(Schema.String, Schema.Unknown),
       executed: Schema.Boolean,
-      state: SessionMessage.ProviderState.pipe(optional),
+      native: SessionMessage.ProviderState.pipe(optional),
     },
   })
   export type Called = typeof Called.Type

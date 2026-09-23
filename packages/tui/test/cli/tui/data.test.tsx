@@ -2792,7 +2792,7 @@ test("settles pending tools when a live failure arrives", async () => {
         id: "call-1",
         input: {},
         executed: false,
-        state: { call: true },
+        native: { call: true },
       },
     })
     emitEvent(events, {
@@ -2855,7 +2855,7 @@ test("settles pending tools when a live failure arrives", async () => {
     expect(tool.state.metadata).toBeUndefined()
     expect(tool.state.content).toBeUndefined()
     expect(tool.executed).toBe(false)
-    expect(tool.providerState).toEqual({ call: true })
+    expect(tool.native).toEqual({ call: true })
     expect(tool.providerResultState).toEqual({ result: true })
     expect(sync.session.message.list("session-1").map((message) => message.type)).toEqual([
       "agent-switched",

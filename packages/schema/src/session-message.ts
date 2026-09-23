@@ -163,7 +163,7 @@ export const AssistantTool = Schema.Struct({
   id: Schema.String,
   name: Schema.String,
   executed: Schema.Boolean.pipe(optional),
-  providerState: ProviderState.pipe(optional),
+  native: ProviderState.pipe(optional),
   providerResultState: ProviderState.pipe(optional),
   state: ToolState,
   time: Schema.Struct({
@@ -319,7 +319,7 @@ export type Info =
   | Idle
 export type Type = Info["type"]
 
-/** Reads messages stored before provider blobs were renamed to `native`. Tool parts are unchanged. */
+/** Reads messages stored before provider blobs were renamed to `native`. */
 export function persisted(input: unknown) {
   if (!Predicate.isObject(input)) return input
   const message =
@@ -327,8 +327,10 @@ export function persisted(input: unknown) {
   if (message.type !== "assistant" || !Array.isArray(message.content)) return message
   const stored: ReadonlyArray<unknown> = message.content
   const content = stored.map((part) => {
-    if (!Predicate.isObject(part) || (part.type !== "text" && part.type !== "reasoning")) return part
-    return rename(part, "state", "native")
+    if (!Predicate.isObject(part)) return part
+    if (part.type === "text" || part.type === "reasoning") return rename(part, "state", "native")
+    if (part.type === "tool") return rename(part, "providerState", "native")
+    return part
   })
   return content.every((part, index) => part === stored[index]) ? message : { ...message, content }
 }

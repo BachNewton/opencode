@@ -186,19 +186,19 @@ const assistant = (message: SessionMessage.Assistant, model: Model.Ref, provider
       (sameModel && item.executed === true && (item.state.status === "completed" || item.state.status === "error"))
     const call = toolCall(
       item,
-      reuseToolProviderMetadata ? providerMetadata(providerMetadataKey, item.providerState) : undefined,
+      reuseToolProviderMetadata ? providerMetadata(providerMetadataKey, item.native) : undefined,
     )
     if (item.executed !== true) return [call]
     // Hosted tools (e.g. google_search) run inside the provider, so their
     // result payload (`providerResultState`) is provider-format data rather
     // than model-scoped proof: it stays replayable across models of the same
     // provider. After a model switch, echo only that payload — never fall
-    // back to `providerState`, whose call-side values are bound to the old
+    // back to `native`, whose call-side values are bound to the old
     // model.
     const result = toolResult(
       item,
       reuseToolProviderMetadata
-        ? providerMetadata(providerMetadataKey, item.providerResultState ?? item.providerState)
+        ? providerMetadata(providerMetadataKey, item.providerResultState ?? item.native)
         : sameProvider && item.providerResultState !== undefined
           ? providerMetadata(providerMetadataKey, item.providerResultState)
           : undefined,
@@ -216,7 +216,7 @@ const assistant = (message: SessionMessage.Assistant, model: Model.Ref, provider
       toolResult(
         item,
         reuseProviderMetadata
-          ? providerMetadata(providerMetadataKey, item.providerResultState ?? item.providerState)
+          ? providerMetadata(providerMetadataKey, item.providerResultState ?? item.native)
           : undefined,
       ),
     )

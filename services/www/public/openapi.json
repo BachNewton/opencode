@@ -17419,7 +17419,7 @@
           "executed": {
             "type": "boolean"
           },
-          "providerState": {
+          "native": {
             "$ref": "#/components/schemas/Session.Message.ProviderState_2"
           },
           "providerResultState": {

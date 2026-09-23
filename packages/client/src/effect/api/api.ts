@@ -1028,7 +1028,7 @@ export type SessionLogOutput =
             readonly id: string
             readonly input: { readonly [x: string]: unknown }
             readonly executed: boolean
-            readonly state?: SessionMessage.ProviderState | undefined
+            readonly native?: SessionMessage.ProviderState | undefined
           }
         }
       | {

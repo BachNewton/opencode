@@ -279,7 +279,7 @@ function sanitizeMessage(message: SessionMessage.Info): SessionMessage.Info {
           }
         return {
           ...content,
-          providerState: content.providerState ? { redacted: `tool-provider-state:${message.id}` } : undefined,
+          native: content.native ? { redacted: `tool-native:${message.id}` } : undefined,
           providerResultState: content.providerResultState
             ? { redacted: `tool-provider-result-state:${message.id}` }
             : undefined,

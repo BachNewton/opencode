@@ -324,7 +324,7 @@ export function update(adapter: Adapter, event: SessionEvent.DurableEvent) {
           const match = latestTool(draft, event.data.id)
           if (match) {
             match.executed = event.data.executed
-            match.providerState = event.data.state
+            match.native = event.data.native
             match.time.ran = created
             match.state = castDraft(
               SessionMessage.ToolStateRunning.make({

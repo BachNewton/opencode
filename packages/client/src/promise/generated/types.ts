@@ -1350,7 +1350,7 @@ export type SessionToolCalled = {
     id: string
     input: { [x: string]: any }
     executed: boolean
-    state?: SessionMessageProviderState1
+    native?: SessionMessageProviderState1
   }
 }
 
@@ -2169,7 +2169,7 @@ export type SessionMessageAssistantTool = {
   id: string
   name: string
   executed?: boolean
-  providerState?: SessionMessageProviderState
+  native?: SessionMessageProviderState
   providerResultState?: SessionMessageProviderState
   state:
     | SessionMessageToolStateStreaming
@@ -2189,7 +2189,7 @@ export type SessionMessageAssistantTool1 = {
   id: string
   name: string
   executed?: boolean
-  providerState?: SessionMessageProviderState1
+  native?: SessionMessageProviderState1
   providerResultState?: SessionMessageProviderState1
   state:
     | SessionMessageToolStateStreaming
@@ -3114,7 +3114,7 @@ export type SessionImportInput = {
                 readonly id: string
                 readonly name: string
                 readonly executed?: boolean
-                readonly providerState?: { readonly [x: string]: JsonValue }
+                readonly native?: { readonly [x: string]: JsonValue }
                 readonly providerResultState?: { readonly [x: string]: JsonValue }
                 readonly state:
                   | { readonly status: "streaming"; readonly input: string }
@@ -3431,7 +3431,7 @@ export type SessionImportInput = {
                 readonly id: string
                 readonly name: string
                 readonly executed?: boolean
-                readonly providerState?: { readonly [x: string]: JsonValue }
+                readonly native?: { readonly [x: string]: JsonValue }
                 readonly providerResultState?: { readonly [x: string]: JsonValue }
                 readonly state:
                   | { readonly status: "streaming"; readonly input: string }
@@ -3748,7 +3748,7 @@ export type SessionImportInput = {
                 readonly id: string
                 readonly name: string
                 readonly executed?: boolean
-                readonly providerState?: { readonly [x: string]: JsonValue }
+                readonly native?: { readonly [x: string]: JsonValue }
                 readonly providerResultState?: { readonly [x: string]: JsonValue }
                 readonly state:
                   | { readonly status: "streaming"; readonly input: string }

@@ -64,7 +64,7 @@ type ToolSeed = {
   name: string
   messageID?: string
   executed?: boolean
-  providerState?: Record<string, unknown>
+  native?: Record<string, unknown>
   providerResultState?: Record<string, unknown>
   state:
     | { status: "streaming"; input: Record<string, unknown>; raw: string }
@@ -721,7 +721,7 @@ function messageContent(
       ...(completed === undefined ? {} : { completed }),
     },
     ...(part.executed === undefined ? {} : { executed: part.executed }),
-    ...(part.providerState ? { providerState: jsonRecord(part.providerState) } : {}),
+    ...(part.native ? { native: jsonRecord(part.native) } : {}),
     ...(part.providerResultState ? { providerResultState: jsonRecord(part.providerResultState) } : {}),
   }
   if (state.status === "streaming") return { ...base, state: { status: "streaming", input: state.raw } }
@@ -791,7 +791,7 @@ function toolEvents(part: ToolSeed, messageID: string): readonly OpenCodeEvent[]
         id: part.id,
         input: part.state.input,
         executed: part.executed ?? true,
-        state: jsonRecord(part.providerState),
+        native: jsonRecord(part.native),
       }),
     )
   }

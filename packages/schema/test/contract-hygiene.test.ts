@@ -265,7 +265,7 @@ describe("contract hygiene", () => {
         id: "call_1",
         name: "search",
         executed: true,
-        providerState: { itemId: "item_1" },
+        native: { itemId: "item_1" },
         state: { status: "streaming", input: "" },
         time: { created: DateTime.makeUnsafe(0) },
       }),
