@@ -353,7 +353,7 @@ export namespace Step {
       assistantMessageID: SessionMessage.ID,
       finish: FinishReason,
       rawFinish: Schema.String.pipe(optional),
-      providerState: SessionMessage.ProviderState.pipe(optional),
+      native: SessionMessage.ProviderState.pipe(optional),
       cost: Money.USD,
       tokens: TokenUsage.Info,
       snapshot: Snapshot.ID.pipe(optional),
@@ -371,7 +371,7 @@ export namespace Step {
       error: SessionError.Error,
       finish: Schema.Literals(["content-filter"]).pipe(optional),
       rawFinish: Schema.String.pipe(optional),
-      providerState: SessionMessage.ProviderState.pipe(optional),
+      native: SessionMessage.ProviderState.pipe(optional),
       cost: Money.USD.pipe(optional),
       tokens: TokenUsage.Info.pipe(optional),
       snapshot: Snapshot.ID.pipe(optional),
@@ -413,7 +413,7 @@ export namespace Text {
       assistantMessageID: SessionMessage.ID,
       ordinal: NonNegativeInt,
       text: Schema.String,
-      state: SessionMessage.ProviderState.pipe(optional),
+      native: SessionMessage.ProviderState.pipe(optional),
     },
   })
   export type Ended = typeof Ended.Type
@@ -427,7 +427,7 @@ export namespace Reasoning {
       ...Base,
       assistantMessageID: SessionMessage.ID,
       ordinal: NonNegativeInt,
-      state: SessionMessage.ProviderState.pipe(optional),
+      native: SessionMessage.ProviderState.pipe(optional),
     },
   })
   export type Started = typeof Started.Type
@@ -452,7 +452,7 @@ export namespace Reasoning {
       assistantMessageID: SessionMessage.ID,
       ordinal: NonNegativeInt,
       text: Schema.String,
-      state: SessionMessage.ProviderState.pipe(optional),
+      native: SessionMessage.ProviderState.pipe(optional),
     },
   })
   export type Ended = typeof Ended.Type
@@ -601,7 +601,7 @@ export namespace Compaction {
       ...Base,
       reason: Started.data.fields.reason,
       model: SessionMessage.CompactionCompleted.fields.model,
-      providerState: SessionMessage.CompactionCompleted.fields.native,
+      native: SessionMessage.CompactionCompleted.fields.native,
       providerContext: SessionMessage.CompactionCompleted.fields.providerContext,
       text: Schema.String,
       recent: Schema.String,

@@ -190,7 +190,7 @@ describe("public event manifest", () => {
       assistantMessageID,
       ordinal: 0,
       text: "thought",
-      state: { signature: "sig" },
+      native: { signature: "sig" },
     })
     const tool = SessionEvent.Tool.Called.data.make({
       sessionID,

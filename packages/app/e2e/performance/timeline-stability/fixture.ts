@@ -406,7 +406,7 @@ export function partUpdated(part: PartSeed<"assistant">): readonly OpenCodeEvent
           sessionID,
           assistantMessageID: messageID,
           ordinal: ref.ordinal!,
-          state: jsonRecord(part.metadata),
+          native: jsonRecord(part.metadata),
         }),
       ]
     return [
@@ -417,7 +417,7 @@ export function partUpdated(part: PartSeed<"assistant">): readonly OpenCodeEvent
               sessionID,
               assistantMessageID: messageID,
               ordinal: ref.ordinal!,
-              state: jsonRecord(part.metadata),
+              native: jsonRecord(part.metadata),
             }),
           ]),
       makeEvent("session.reasoning.ended", {
@@ -425,7 +425,7 @@ export function partUpdated(part: PartSeed<"assistant">): readonly OpenCodeEvent
         assistantMessageID: messageID,
         ordinal: ref.ordinal!,
         text: part.text,
-        state: jsonRecord(part.metadata),
+        native: jsonRecord(part.metadata),
       }),
     ]
   }

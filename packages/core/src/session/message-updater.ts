@@ -83,9 +83,7 @@ export function update(adapter: Adapter, event: SessionEvent.DurableEvent) {
       "session.message.content.updated": (event) =>
         updateOwnedAssistant(event.data.messageID, (draft) => {
           draft.content = castDraft(
-            Schema.decodeUnknownSync(Schema.Array(SessionMessage.AssistantContent))(
-              SessionMessage.persistedContent(event.data.content),
-            ),
+            Schema.decodeUnknownSync(Schema.Array(SessionMessage.AssistantContent))(event.data.content),
           )
         }),
       "session.usage.recorded": () => Effect.void,
@@ -265,7 +263,7 @@ export function update(adapter: Adapter, event: SessionEvent.DurableEvent) {
           draft.time.completed = created
           draft.finish = event.data.finish
           draft.rawFinish = event.data.rawFinish
-          draft.native = castDraft(event.data.providerState)
+          draft.native = castDraft(event.data.native)
           draft.cost = event.data.cost
           draft.tokens = event.data.tokens
           projectTerminalSnapshot(draft, event)
@@ -276,7 +274,7 @@ export function update(adapter: Adapter, event: SessionEvent.DurableEvent) {
           draft.time.completed = created
           draft.finish = event.data.finish ?? "error"
           draft.rawFinish = event.data.rawFinish
-          draft.native = castDraft(event.data.providerState)
+          draft.native = castDraft(event.data.native)
           draft.error = castDraft(event.data.error)
           draft.retry = undefined
           if (event.data.cost !== undefined && event.data.tokens !== undefined) {
@@ -296,7 +294,7 @@ export function update(adapter: Adapter, event: SessionEvent.DurableEvent) {
           const match = latestText(draft)
           if (match) {
             match.text = event.data.text
-            match.native = castDraft(event.data.state)
+            match.native = castDraft(event.data.native)
           }
         })
       },
@@ -384,7 +382,7 @@ export function update(adapter: Adapter, event: SessionEvent.DurableEvent) {
               SessionMessage.AssistantReasoning.make({
                 type: "reasoning",
                 text: "",
-                native: event.data.state,
+                native: event.data.native,
                 time: { created },
               }),
             ),
@@ -397,7 +395,7 @@ export function update(adapter: Adapter, event: SessionEvent.DurableEvent) {
           if (match) {
             match.text = event.data.text
             match.time = { created: match.time?.created ?? created, completed: created }
-            if (event.data.state !== undefined) match.native = event.data.state
+            if (event.data.native !== undefined) match.native = event.data.native
           }
         })
       },
@@ -433,7 +431,7 @@ export function update(adapter: Adapter, event: SessionEvent.DurableEvent) {
               metadata: event.metadata ? { ...current.metadata, ...event.metadata } : current.metadata,
               reason: event.data.reason,
               model: event.data.model,
-              native: event.data.providerState,
+              native: event.data.native,
               summary: event.data.text,
               providerContext: event.data.providerContext,
               recent: event.data.recent,
@@ -450,7 +448,7 @@ export function update(adapter: Adapter, event: SessionEvent.DurableEvent) {
               metadata: event.metadata,
               reason: event.data.reason,
               model: event.data.model,
-              native: event.data.providerState,
+              native: event.data.native,
               summary: event.data.text,
               providerContext: event.data.providerContext,
               recent: event.data.recent,

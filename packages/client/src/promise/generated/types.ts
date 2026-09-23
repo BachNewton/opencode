@@ -1266,7 +1266,7 @@ export type SessionStepEnded = {
     assistantMessageID: string
     finish: "stop" | "length" | "tool-calls" | "content-filter" | "error" | "unknown"
     rawFinish?: string
-    providerState?: SessionMessageProviderState1
+    native?: SessionMessageProviderState1
     cost: MoneyUSD
     tokens: TokenUsageInfo
     snapshot?: string
@@ -1287,7 +1287,7 @@ export type SessionStepFailed = {
     error: SessionStructuredError
     finish?: "content-filter"
     rawFinish?: string
-    providerState?: SessionMessageProviderState1
+    native?: SessionMessageProviderState1
     cost?: MoneyUSD
     tokens?: TokenUsageInfo
     snapshot?: string
@@ -1307,7 +1307,7 @@ export type SessionTextEnded = {
     assistantMessageID: string
     ordinal: number
     text: string
-    state?: SessionMessageProviderState1
+    native?: SessionMessageProviderState1
   }
 }
 
@@ -1318,7 +1318,7 @@ export type SessionReasoningStarted = {
   type: "session.reasoning.started"
   durable: { aggregateID: string; seq: number; version: 1 }
   location?: LocationRef
-  data: { sessionID: string; assistantMessageID: string; ordinal: number; state?: SessionMessageProviderState1 }
+  data: { sessionID: string; assistantMessageID: string; ordinal: number; native?: SessionMessageProviderState1 }
 }
 
 export type SessionReasoningEnded = {
@@ -1333,7 +1333,7 @@ export type SessionReasoningEnded = {
     assistantMessageID: string
     ordinal: number
     text: string
-    state?: SessionMessageProviderState1
+    native?: SessionMessageProviderState1
   }
 }
 
@@ -1352,6 +1352,15 @@ export type SessionToolCalled = {
     executed: boolean
     state?: SessionMessageProviderState1
   }
+}
+
+export type SessionMessageAssistantText1 = { type: "text"; text: string; native?: SessionMessageProviderState1 }
+
+export type SessionMessageAssistantReasoning1 = {
+  type: "reasoning"
+  text: string
+  native?: SessionMessageProviderState1
+  time?: { created: number; completed?: number }
 }
 
 export type ToolContent1 = ToolTextContent | ToolFileContent1
@@ -1772,7 +1781,7 @@ export type SessionCompactionEnded = {
     sessionID: string
     reason: "auto" | "manual"
     model?: ModelRef
-    providerState?: SessionMessageProviderState1
+    native?: SessionMessageProviderState1
     providerContext?: SessionProviderContext
     text: string
     recent: string
@@ -2227,13 +2236,8 @@ export type SessionMessageAssistant = {
 }
 
 export type SessionMessageAssistantContentEncoded =
-  | { type: "text"; text: string; state?: SessionMessageProviderState1 }
-  | {
-      type: "reasoning"
-      text: string
-      time?: { created: number; completed?: number }
-      state?: SessionMessageProviderState1
-    }
+  | SessionMessageAssistantText1
+  | SessionMessageAssistantReasoning1
   | SessionMessageAssistantTool1
 
 export type FormInfo = { id: string; sessionID: string; title: string; metadata?: FormMetadata; fields: FormFields }

@@ -290,7 +290,7 @@ export async function runNonInteractivePrompt(input: Input) {
           messageID: event.data.assistantMessageID,
           type: "reasoning",
           text: event.data.text,
-          metadata: event.data.state,
+          metadata: event.data.native,
           time: { start: started?.timestamp ?? time, end: time },
         }
         renderedReasoning.set(key, event.data.text)

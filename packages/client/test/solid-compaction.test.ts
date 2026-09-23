@@ -120,7 +120,7 @@ test.each(["started", "cancelled", "failed"])(
           sessionID,
           reason: "manual",
           model,
-          providerState,
+          native: providerState,
           providerContext,
           text: "Summary",
           recent: "Recent",
