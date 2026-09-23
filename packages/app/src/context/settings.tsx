@@ -57,6 +57,14 @@ export interface Settings {
 export const monoDefault = "System Mono"
 export const sansDefault = "System Sans"
 export const terminalDefault = "JetBrainsMono Nerd Font Mono"
+export const fontSizeDefault = 14
+export const fontSizeMin = 10
+export const fontSizeMax = 24
+
+export function normalizeFontSize(value: unknown) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return fontSizeDefault
+  return Math.min(fontSizeMax, Math.max(fontSizeMin, Math.round(value)))
+}
 const legacyNewLayoutDesignsDefault = import.meta.env.VITE_OPENCODE_CHANNEL !== "prod"
 export const newLayoutDesignsDefault = true
 // Existing users can switch layouts until local midnight on this date. Set new Date(YYYY, M-1, D) to show.
@@ -197,7 +205,7 @@ const defaultSettings: Settings = {
     mobileTitlebarPosition: "top",
   },
   appearance: {
-    fontSize: 14,
+    fontSize: fontSizeDefault,
     mono: "",
     sans: "",
     terminal: "",
@@ -348,6 +356,7 @@ export const { use: useSettings, provider: SettingsProvider } = createSimpleCont
       const root = document.documentElement
       root.style.setProperty("--font-family-mono", monoFontFamily(store.appearance?.mono))
       root.style.setProperty("--font-family-sans", sansFontFamily(store.appearance?.sans))
+      root.style.setProperty("--font-size-user", `${normalizeFontSize(store.appearance?.fontSize)}px`)
     })
 
     createEffect(() => {
@@ -461,7 +470,7 @@ export const { use: useSettings, provider: SettingsProvider } = createSimpleCont
       appearance: {
         fontSize: withFallback(() => store.appearance?.fontSize, defaultSettings.appearance.fontSize),
         setFontSize(value: number) {
-          setStore("appearance", "fontSize", value)
+          setStore("appearance", "fontSize", normalizeFontSize(value))
         },
         font: withFallback(() => store.appearance?.mono, defaultSettings.appearance.mono),
         setFont(value: string) {

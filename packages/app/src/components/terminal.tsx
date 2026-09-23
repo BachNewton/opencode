@@ -12,7 +12,7 @@ import { useLanguage } from "@/context/language"
 import { usePlatform } from "@/context/platform"
 import { useSDK } from "@/context/sdk"
 import { useServerSDK } from "@/context/server-sdk"
-import { terminalFontFamily, useSettings } from "@/context/settings"
+import { normalizeFontSize, terminalFontFamily, useSettings } from "@/context/settings"
 import type { LocalPTY } from "@/context/terminal"
 import { disposeIfDisposable, getHoveredLinkText, setOptionIfSupported } from "@/utils/runtime-adapters"
 import { terminalWriter } from "@/utils/terminal-writer"
@@ -345,6 +345,13 @@ export const Terminal = (props: TerminalProps) => {
     scheduleFit()
   })
 
+  createEffect(() => {
+    const size = normalizeFontSize(settings.appearance.fontSize())
+    if (!term) return
+    setOptionIfSupported(term, "fontSize", size)
+    scheduleFit()
+  })
+
   let zoom = platform.webviewZoom?.()
   createEffect(() => {
     const next = platform.webviewZoom?.()
@@ -402,7 +409,7 @@ export const Terminal = (props: TerminalProps) => {
         cursorStyle: "bar",
         cols: restoreSize?.cols,
         rows: restoreSize?.rows,
-        fontSize: 14,
+        fontSize: normalizeFontSize(settings.appearance.fontSize()),
         fontFamily: terminalFontFamily(settings.appearance.terminalFont()),
         allowTransparency: false,
         convertEol: false,

@@ -328,3 +328,60 @@
     }
   }
 }
+
+/* Text-only font size (Settings → General → Appearance → Font size).
+   `--font-size-user` is set on documentElement from `appearance.fontSize`
+   and defaults to 14px to match the setting default. Only font sizes derive
+   from it; spacing, layout, and icon sizes are untouched. Unlayered so these
+   win over the layered theme defaults and Tailwind utilities. */
+:root {
+  --font-size-user: 14px;
+  --font-size-small: calc(var(--font-size-user) * 13 / 14);
+  --font-size-base: var(--font-size-user);
+  --font-size-large: calc(var(--font-size-user) * 16 / 14);
+  --font-size-x-large: calc(var(--font-size-user) * 20 / 14);
+}
+
+.text-\[9px\] {
+  font-size: calc(var(--font-size-user) * 9 / 14);
+}
+.text-\[10px\] {
+  font-size: calc(var(--font-size-user) * 10 / 14);
+}
+.text-\[11px\] {
+  font-size: calc(var(--font-size-user) * 11 / 14);
+}
+.text-\[12px\] {
+  font-size: calc(var(--font-size-user) * 12 / 14);
+}
+.text-\[13px\] {
+  font-size: calc(var(--font-size-user) * 13 / 14);
+}
+.text-\[14px\] {
+  font-size: var(--font-size-user);
+}
+.text-\[15px\] {
+  font-size: calc(var(--font-size-user) * 15 / 14);
+}
+.text-\[21px\] {
+  font-size: calc(var(--font-size-user) * 21 / 14);
+}
+.text-\[32px\] {
+  font-size: calc(var(--font-size-user) * 32 / 14);
+}
+
+/* Markdown body text already follows --font-size-base; code blocks and
+   headings are pinned to px upstream, so re-pin them to the scaled vars.
+   At the default 14px setting these render exactly as before. */
+[data-component="markdown"] .shiki {
+  font-size: var(--font-size-small);
+}
+[data-component="markdown"] h1 {
+  font-size: calc(var(--font-size-user) * 17 / 14);
+}
+[data-component="markdown"] h2 {
+  font-size: calc(var(--font-size-user) * 15 / 14);
+}
+[data-component="markdown"] :is(h3, h4, h5, h6) {
+  font-size: var(--font-size-small);
+}

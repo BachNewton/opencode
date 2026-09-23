@@ -5,9 +5,12 @@ import { usePermission } from "@/context/permission"
 import { useServerSDK } from "@/context/server-sdk"
 import { useServerSync } from "@/context/server-sync"
 import {
+  fontSizeMax,
+  fontSizeMin,
   monoDefault,
   monoFontFamily,
   monoInput,
+  normalizeFontSize,
   sansDefault,
   sansFontFamily,
   sansInput,
@@ -90,6 +93,9 @@ export function createAppearanceSettingsController() {
       select: (option: { id: string } | null) => option && theme.setTheme(option.id),
     },
     fonts: {
+      size: createMemo(() => normalizeFontSize(settings.appearance.fontSize())),
+      min: fontSizeMin,
+      max: fontSizeMax,
       ui: createMemo(() => ({
         value: sansInput(settings.appearance.uiFont()),
         family: sansFontFamily(settings.appearance.uiFont()),
@@ -108,6 +114,7 @@ export function createAppearanceSettingsController() {
       setUI: (value: string) => settings.appearance.setUIFont(value),
       setCode: (value: string) => settings.appearance.setFont(value),
       setTerminal: (value: string) => settings.appearance.setTerminalFont(value),
+      setSize: (value: number) => settings.appearance.setFontSize(value),
     },
   }
 }

@@ -169,11 +169,50 @@ const AppearanceSection: Component<{ controller: AppearanceSettingsController }>
           />
         </SettingsRowV2>
 
+        <FontSizeSetting fonts={props.controller.fonts} />
         <FontSetting kind="ui" fonts={props.controller.fonts} />
         <FontSetting kind="code" fonts={props.controller.fonts} />
         <FontSetting kind="terminal" fonts={props.controller.fonts} />
       </SettingsListV2>
     </div>
+  )
+}
+
+const FontSizeSetting: Component<{
+  fonts: AppearanceSettingsController["fonts"]
+}> = (props) => {
+  const language = useLanguage()
+  // Commit on change (blur/enter/spinner) rather than on every keystroke so
+  // intermediate values like a lone "1" are not clamped while typing.
+  const commit = (input: HTMLInputElement) => {
+    const next = Number(input.value)
+    if (!Number.isFinite(next)) {
+      input.value = String(props.fonts.size())
+      return
+    }
+    props.fonts.setSize(next)
+    input.value = String(props.fonts.size())
+  }
+  return (
+    <SettingsRowV2
+      title={language.t("settings.general.row.fontSize.title")}
+      description={language.t("settings.general.row.fontSize.description")}
+    >
+      <div class="w-full sm:w-[220px]">
+        <TextInputV2
+          data-action="settings-font-size"
+          type="number"
+          appearance="base"
+          numeric
+          min={props.fonts.min}
+          max={props.fonts.max}
+          step={1}
+          value={String(props.fonts.size())}
+          onChange={(event) => commit(event.currentTarget)}
+          aria-label={language.t("settings.general.row.fontSize.title")}
+        />
+      </div>
+    </SettingsRowV2>
   )
 }
 
