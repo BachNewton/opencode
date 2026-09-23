@@ -1441,8 +1441,8 @@ it.live("discovers and reads MCP resources through Code Mode", () =>
       const listed = yield* run('return await tools.opencode.list_mcp_resources({ server: "resources" })')
       expect(JSON.parse(listed.output.output)).toEqual({
         resources: [
-          { server: "resources", name: "Readme", uri: "docs://readme" },
           { server: "resources", name: "Guide", uri: "docs://guide" },
+          { server: "resources", name: "Readme", uri: "docs://readme" },
         ],
         templates: [
           { server: "resources", name: "File", uriTemplate: "docs://{path}" },
@@ -1469,8 +1469,8 @@ it.live("discovers and reads MCP resources through Code Mode", () =>
       const untemplated = yield* run('return await tools.opencode.list_mcp_resources({ server: "resources" })')
       expect(JSON.parse(untemplated.output.output)).toEqual({
         resources: [
-          { server: "resources", name: "Readme", uri: "docs://readme" },
           { server: "resources", name: "Guide", uri: "docs://guide" },
+          { server: "resources", name: "Readme", uri: "docs://readme" },
         ],
         templates: [],
       })

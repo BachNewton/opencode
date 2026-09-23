@@ -353,6 +353,41 @@ export const layer = (options?: Options) =>
           ),
         )
 
+      const loadCatalog = (name: ServerName, entry: ServerEntry, connection: McpClient.Connection) =>
+        recovering(name, entry, connection, (connection) =>
+          Effect.all(
+            {
+              resources: connection.resources(),
+              // Some servers declare resources without implementing template listing.
+              templates: connection.resourceTemplates().pipe(Effect.orElseSucceed(() => [])),
+            },
+            { concurrency: "unbounded" },
+          ),
+        ).pipe(
+          Effect.map((catalog) =>
+            ResourceCatalog.make({
+              resources: catalog.resources.map((resource) =>
+                Resource.make({
+                  server: name,
+                  name: resource.name,
+                  uri: resource.uri,
+                  description: resource.description,
+                  mimeType: resource.mimeType,
+                }),
+              ),
+              templates: catalog.templates.map((template) =>
+                ResourceTemplate.make({
+                  server: name,
+                  name: template.name,
+                  uriTemplate: template.uriTemplate,
+                  description: template.description,
+                  mimeType: template.mimeType,
+                }),
+              ),
+            }),
+          ),
+        )
+
       const watch = (name: ServerName, entry: ServerEntry, connection: McpClient.Connection) => {
         const live = whenLive(name, entry, connection)
         connection.onClose(() =>
@@ -663,92 +698,22 @@ export const layer = (options?: Options) =>
           return { ...result, server: target.name, name: input.name }
         }),
         resourceCatalog: Effect.fn("MCP.resourceCatalog")(function* () {
+          const empty = ResourceCatalog.make({ resources: [], templates: [] })
           const catalogs = yield* Effect.forEach(
             Array.from(entries),
-            ([name, entry]) => {
-              if (!entry.client) return Effect.succeed({ resources: [], templates: [] })
-              return Effect.all(
-                {
-                  resources: entry.client.resources().pipe(Effect.orElseSucceed(() => [])),
-                  templates: entry.client.resourceTemplates().pipe(Effect.orElseSucceed(() => [])),
-                },
-                { concurrency: "unbounded" },
-              ).pipe(
-                Effect.map((catalog) => ({
-                  resources: catalog.resources.map((resource) =>
-                    Resource.make({
-                      server: name,
-                      name: resource.name,
-                      uri: resource.uri,
-                      description: resource.description,
-                      mimeType: resource.mimeType,
-                    }),
-                  ),
-                  templates: catalog.templates.map((template) =>
-                    ResourceTemplate.make({
-                      server: name,
-                      name: template.name,
-                      uriTemplate: template.uriTemplate,
-                      description: template.description,
-                      mimeType: template.mimeType,
-                    }),
-                  ),
-                })),
-              )
-            },
+            ([name, entry]) =>
+              entry.client
+                ? loadCatalog(name, entry, entry.client).pipe(Effect.orElseSucceed(() => empty))
+                : Effect.succeed(empty),
             { concurrency: "unbounded" },
           )
-          return ResourceCatalog.make({
-            resources: catalogs
-              .flatMap((catalog) => catalog.resources)
-              .toSorted(
-                (a, b) =>
-                  a.server.localeCompare(b.server) || a.name.localeCompare(b.name) || a.uri.localeCompare(b.uri),
-              ),
-            templates: catalogs
-              .flatMap((catalog) => catalog.templates)
-              .toSorted(
-                (a, b) =>
-                  a.server.localeCompare(b.server) ||
-                  a.name.localeCompare(b.name) ||
-                  a.uriTemplate.localeCompare(b.uriTemplate),
-              ),
-          })
+          return mergeCatalogs(catalogs)
         }),
         resources: Effect.fn("MCP.resources")(function* (input) {
           const target = yield* requireServer(input.server)
           yield* target.entry.startup.await
           if (!target.entry.client) return ResourceCatalog.make({ resources: [], templates: [] })
-          const catalog = yield* recovering(target.name, target.entry, target.entry.client, (connection) =>
-            Effect.all(
-              {
-                resources: connection.resources(),
-                // Some servers declare resources without implementing template listing.
-                templates: connection.resourceTemplates().pipe(Effect.orElseSucceed(() => [])),
-              },
-              { concurrency: "unbounded" },
-            ),
-          )
-          return ResourceCatalog.make({
-            resources: catalog.resources.map((resource) =>
-              Resource.make({
-                server: target.name,
-                name: resource.name,
-                uri: resource.uri,
-                description: resource.description,
-                mimeType: resource.mimeType,
-              }),
-            ),
-            templates: catalog.templates.map((template) =>
-              ResourceTemplate.make({
-                server: target.name,
-                name: template.name,
-                uriTemplate: template.uriTemplate,
-                description: template.description,
-                mimeType: template.mimeType,
-              }),
-            ),
-          })
+          return mergeCatalogs([yield* loadCatalog(target.name, target.entry, target.entry.client)])
         }),
         readResource: Effect.fn("MCP.readResource")(function* (input) {
           const target = yield* requireServer(input.server)
@@ -771,6 +736,24 @@ export const layer = (options?: Options) =>
       })
     }),
   )
+
+function mergeCatalogs(catalogs: ReadonlyArray<ResourceCatalog>) {
+  return ResourceCatalog.make({
+    resources: catalogs
+      .flatMap((catalog) => catalog.resources)
+      .toSorted(
+        (a, b) => a.server.localeCompare(b.server) || a.name.localeCompare(b.name) || a.uri.localeCompare(b.uri),
+      ),
+    templates: catalogs
+      .flatMap((catalog) => catalog.templates)
+      .toSorted(
+        (a, b) =>
+          a.server.localeCompare(b.server) ||
+          a.name.localeCompare(b.name) ||
+          a.uriTemplate.localeCompare(b.uriTemplate),
+      ),
+  })
+}
 
 export function configured(options?: Options) {
   return makeLocationNode({
